@@ -1,0 +1,287 @@
+# CURSOR SUPERPROMPT — SALAMEH CARGO (Custom Tracker)
+
+## ROLE
+
+Act as my **CTO-grade engineer + architect** inside Cursor. Use **deep reasoning + web research** when needed. Optimize for **speed-to-value** and **maintainability**. If a spec is ambiguous, stop and ask **up to 3 blocking questions** before generating code.
+
+## OBJECTIVE
+
+Build a **fast, responsive, custom** shipment-tracking platform to replace slow WordPress. Public tracking + customer dashboard + admin back-office. **Primary data path**: daily + on‑demand **headless agents** that fetch from carrier public tracking pages (CMA CGM, MSC, Maersk, Evergreen/EMC, ONE, WTB Cargo, etc.), with API adapters used where available. OTP-based login via WhatsApp.
+
+## NON-GOALS
+
+Payments/accounting. Warehouse/inventory. Anything not required to search/track/manage shipments.
+
+---
+
+## TARGET STACK
+
+* **Frontend**: Next.js 14 (App Router), React Server Components, TailwindCSS, shadcn/ui, next-intl (EN/AR, RTL ready)
+* **API**: NestJS (Node 20+), Prisma ORM → **PostgreSQL**
+* **Cache/Queue**: Redis + **BullMQ**
+* **Workers**: Playwright-based scraping adapters (one per carrier)
+* **Auth**: Phone + OTP. Access JWT (short) + rotating refresh token (httpOnly cookie).
+* **Storage**: S3-compatible (R2/MinIO) for Excel uploads & snapshots
+* **Observability**: Pino logs, request-id, healthz, error alerts
+* **DevOps**: Docker Compose for local; Vercel (web) + Railway/Render (API/Workers/Redis/Postgres); 1 VPS for whatsapp-web.js
+
+---
+
+## PROJECT SKELETON (Monorepo, pnpm)
+
+```
+/ (repo)
+  .env.example
+  .env.schema
+  package.json (pnpm)
+  turbo.json
+  docker-compose.yml
+  /apps
+    /web        (Next.js)
+    /api        (NestJS)
+    /workers    (Playwright + BullMQ consumers)
+    /otp-bot    (whatsapp-web.js service)
+  /packages
+    /shared     (DTOs, zod schemas, types, constants)
+    /ui         (shared components)
+```
+
+---
+
+## CODING STANDARDS
+
+* TypeScript strict. ESLint + Prettier. Zod validation on all inputs/outputs.
+* Prisma with **migrations** + seed scripts.
+* Each feature ships with: unit tests, minimal e2e (supertest/playwright), and a README/runbook.
+* Security: Helmet, CORS allowlist, rate limiting, input sanitization, never log PII/OTP.
+
+---
+
+## ENV VARS (baseline)
+
+```
+NODE_ENV=
+DATABASE_URL=
+REDIS_URL=
+JWT_ACCESS_SECRET=
+JWT_REFRESH_SECRET=
+OTP_RATE_LIMIT_PER_HOUR=5
+S3_ENDPOINT=
+S3_BUCKET=
+S3_ACCESS_KEY_ID=
+S3_SECRET_ACCESS_KEY=
+WHATSAPP_SESSION_STORAGE=./session
+```
+
+---
+
+## DATA MODEL (Prisma sketch)
+
+```prisma
+model User {
+  id           String   @id @default(uuid())
+  phone        String   @unique
+  name         String?
+  role         Role     @default(CUSTOMER)
+  isActive     Boolean  @default(true)
+  lastLoginAt  DateTime?
+  meta         Json?
+  createdAt    DateTime @default(now())
+  AuditLogs    AuditLog[]
+  Shipments    Shipment[] @relation("CustomerShipments")
+}
+
+enum Role { CUSTOMER ADMIN SUPERADMIN }
+
+a model Shipment {
+  id               String   @id @default(uuid())
+  customerId       String?
+  customer         User?    @relation("CustomerShipments", fields: [customerId], references: [id])
+  internalCode     String?  @unique
+  shipper          String   @default("Salameh Cargo")
+  consignee        String?
+  originPort       String?
+  originCountry    String?
+  destinationPort  String?
+  destinationCountry String?
+  vessel           String?
+  voyage           String?
+  status           ShipmentStatus @default(UNKNOWN)
+  etd              DateTime?
+  eta              DateTime?
+  lastEventAt      DateTime?
+  attributes       Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  externalIds      ExternalId[]
+  events           ShipmentEvent[]
+}
+
+enum ShipmentStatus { IN_TRANSIT ARRIVED DELIVERED EXCEPTION UNKNOWN }
+
+model ExternalId {
+  id         String  @id @default(uuid())
+  shipmentId String
+  shipment   Shipment @relation(fields: [shipmentId], references: [id])
+  carrier    Carrier
+  idType     IdType
+  value      String
+  @@unique([carrier, idType, value])
+}
+
+enum Carrier { CMA_CGM MSC MAERSK EMC ONE WTB OTHER }
+
+enum IdType { CONTAINER BL BOOKING REF }
+
+model ShipmentEvent {
+  id             String   @id @default(uuid())
+  shipmentId     String
+  shipment       Shipment  @relation(fields: [shipmentId], references: [id])
+  occurredAt     DateTime
+  eventCode      String
+  eventLabel     String
+  locationName   String?
+  locationCountry String?
+  locode         String?
+  source         String   // CARRIER|MANUAL
+  raw            Json?
+  createdAt      DateTime @default(now())
+}
+
+model ImportJob {
+  id          String   @id @default(uuid())
+  uploadedBy  String?
+  filename    String
+  status      String
+  stats       Json?
+  error       String?
+  createdAt   DateTime @default(now())
+  items       ImportItem[]
+}
+
+model ImportItem {
+  id        String   @id @default(uuid())
+  jobId     String
+  job       ImportJob @relation(fields:[jobId], references:[id])
+  rowRef    String?
+  status    String
+  error     String?
+  payload   Json?
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String?
+  action     String
+  entityType String
+  entityId   String?
+  diff       Json?
+  ip         String?
+  ua         String?
+  createdAt  DateTime @default(now())
+}
+```
+
+---
+
+## API SURFACE (OpenAPI summary)
+
+* `POST /auth/otp/request { phone }` → { ok }
+* `POST /auth/otp/verify { phone, code }` → { accessToken, refreshToken }
+* `GET /shipments/search?q=` (public)
+* `GET /shipments/:id` (auth) → detail + events
+* `POST /admin/imports` (xlsx) → jobId
+* `GET /admin/imports/:jobId` → status
+* `POST /admin/shipments` | `PATCH /admin/shipments/:id`
+* `POST /admin/users` | `PATCH /admin/users/:id`
+
+Contracts must include DTOs (zod + Swagger decorators) and error shapes.
+
+---
+
+## SCRAPING ADAPTERS (Playwright)
+
+* One adapter per carrier: `packages/shared/carriers/<carrier>.ts`
+* Inputs: `{ idType, value }`
+* Outputs (normalized): `{ voyage, vessel, eta, etd, events[] }`
+* Config-driven selectors; store **HTML hash** + raw snapshot (gzipped) for diffing.
+* Caching: Redis key `carrier:idType:value`, TTL 6–12h in-transit; 7d after delivered.
+* Resilience: wait-for selectors, timeouts, backoff, circuit breaker; alert on DOM change > N failures.
+* Compliance: throttle; respect public pages; randomized jitter; per-carrier rate caps.
+
+---
+
+## OTP SERVICE (whatsapp-web.js)
+
+* Dedicated `apps/otp-bot` with persistent session folder.
+* API endpoints inside bot: `/otp/send { phone, code }` (internal only, token-protected).
+* Worker generates 6-digit code, stores hashed+TTL in Redis; verify consumes it.
+
+---
+
+## ADMIN UX
+
+* Shipments table: filters (status, carrier, date), inline edit, bulk actions.
+* Excel Import: column mapper → preview → validate → upsert; downloadable error report.
+* Users: create by phone, assign shipments.
+* Audit log: who/what/when, login history.
+
+---
+
+## PUBLIC/CUSTOMER UX
+
+* Public search bar (Container/BL/Booking/Internal). Results → shipment detail page with timeline.
+* Customer dashboard: cards by status; expandable timelines; notifications toggle.
+* Contact page → WhatsApp deeplink `+96103638127`; store lead in DB.
+
+---
+
+## PERFORMANCE & SECURITY BASELINES
+
+* p95 TTFB < 400ms (cache hit); TTI < 2s on 4G.
+* Strict CSP, Helmet, rate-limit (search + OTP), IP/UA logging, httpOnly cookies.
+* PII minimization; encrypt secrets; rotate keys.
+
+---
+
+## DELIVERABLES (Phase 0 → MVP)
+
+1. **Scaffold** monorepo + Docker + CI; environment schema.
+2. **DB + Prisma** migrations; seed data.
+3. **Auth (OTP)** with mock adapter → real WA bot.
+4. **Public Search** + **Shipment Detail** pages.
+5. **Admin CRUD + Excel Import** with column mapper.
+6. **CMA CGM Adapter** live; caching + normalization.
+7. **Observability** (logs, healthz) + rate limits.
+
+Each PR must include tests and a short runbook.
+
+---
+
+## DEV COMMANDS (generate in repo root)
+
+* `pnpm i` then `pnpm dev` → runs web+api+workers via turbo & compose
+* `pnpm test` → all tests
+* `pnpm migrate:dev` → prisma migrate
+* `pnpm seed` → seed data
+
+---
+
+## WORKFLOW INSIDE CURSOR
+
+1. Before generating code: list assumptions + 3 blocking questions (max).
+2. Generate minimal viable slice with tests.
+3. Provide copy‑pasteable env + Docker instructions.
+4. If an external page structure is unknown, scaffold adapter with TODO selectors and a **mock fixture** for tests.
+
+---
+
+## KICKOFF (execute now)
+
+* Create repo skeleton + configs.
+* Implement schemas/DTOs + OpenAPI decorators in NestJS.
+* Build `/auth/otp/*` with Redis-backed codes and stub WA sender.
+* Ship public search endpoint + simple Next.js pages.
+* Add CMA CGM adapter scaffold with mock HTML fixture + parser and tests.
+
+> If blocked, ask your 3 questions succinctly and pause.
