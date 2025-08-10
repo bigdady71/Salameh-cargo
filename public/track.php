@@ -10,13 +10,23 @@ if (isset($_GET['query'])) {
     $shipments = $stmt->fetchAll();
 
     if ($shipments) {
-        echo '<table><tr><th>Tracking</th><th>Status</th><th>Last Updated</th><th>Source</th></tr>';
+        echo '<div class="table-container">';
+        echo '<table class="shipments-table">';
+        echo '<thead><tr><th>Tracking Number</th><th>Container Number</th><th>Customer</th><th>Status</th><th>Last Updated</th><th>Source</th></tr></thead>';
+        echo '<tbody>';
         foreach ($shipments as $shipment) {
-            echo '<tr><td>' . htmlspecialchars($shipment['tracking_number']) . '</td><td>' . htmlspecialchars($shipment['status']) . '</td><td>' . htmlspecialchars($shipment['created_at']) . '</td><td>Database</td></tr>';
+            echo '<tr>';
+            echo '<td>' . htmlspecialchars($shipment['tracking_number']) . '</td>';
+            echo '<td>' . htmlspecialchars($shipment['container_number'] ?? '-') . '</td>';
+            echo '<td>' . htmlspecialchars($shipment['full_name'] ?? 'Unknown') . '</td>';
+            echo '<td><span class="status-badge status-' . strtolower(str_replace(' ', '-', $shipment['status'])) . '">' . htmlspecialchars($shipment['status']) . '</span></td>';
+            echo '<td>' . date('M j, Y H:i', strtotime($shipment['created_at'])) . '</td>';
+            echo '<td>Database</td>';
+            echo '</tr>';
         }
-        echo '</table>';
+        echo '</tbody></table></div>';
     } else {
-        echo 'No shipments found.';
+        echo '<div class="no-data"><p>No shipments found.</p></div>';
     }
 }
 

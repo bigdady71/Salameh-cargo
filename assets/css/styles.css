@@ -1,1 +1,484 @@
-/* Salameh Cargo Styles */ body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #1a1a1a; color: #fff; } .sticky-header { position: sticky; top: 0; background: #2a2a2a; padding: 1rem; } nav { display: flex; justify-content: space-between; align-items: center; } .nav-links { list-style: none; display: flex; gap: 2rem; } .nav-links a { color: #00ff88; text-decoration: none; } .hero { text-align: center; padding: 4rem 2rem; } table { width: 100%; border-collapse: collapse; margin: 2rem 0; } th, td { padding: 0.5rem; border: 1px solid #444; text-align: left; } th { background: #333; } form { margin: 2rem 0; } input, button { padding: 0.5rem; margin: 0.5rem; } button { background: #00ff88; color: #000; border: none; cursor: pointer; }
+/* Salameh Cargo Styles - Modern Dark Theme */
+
+/* Reset and Base Styles */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #0a0a0a;
+    color: #ffffff;
+    line-height: 1.6;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header and Navigation */
+.sticky-header {
+    position: sticky;
+    top: 0;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+    padding: 1rem 0;
+    box-shadow: 0 2px 10px rgba(0, 255, 136, 0.1);
+    z-index: 1000;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.logo a {
+    color: #00ff88;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    color: #00ff88;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover {
+    background: rgba(0, 255, 136, 0.1);
+    color: #ffffff;
+}
+
+/* Hero Section */
+.hero {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+    border-bottom: 1px solid #333;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #00ff88;
+    text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #cccccc;
+}
+
+/* Forms */
+form {
+    margin: 2rem 0;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #00ff88;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background: #1a1a1a;
+    color: #ffffff;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #00ff88;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.form-group small {
+    display: block;
+    margin-top: 0.25rem;
+    color: #888;
+    font-size: 0.875rem;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+    color: #000000;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #00cc6a 0%, #00ff88 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+}
+
+.btn-secondary {
+    background: #333;
+    color: #ffffff;
+    border: 1px solid #555;
+}
+
+.btn-secondary:hover {
+    background: #444;
+    border-color: #00ff88;
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+}
+
+/* Tables */
+.table-container {
+    overflow-x: auto;
+    margin: 2rem 0;
+    border-radius: 10px;
+    background: #1a1a1a;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #333;
+}
+
+th {
+    background: #2a2a2a;
+    color: #00ff88;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.5px;
+}
+
+tr:hover {
+    background: rgba(0, 255, 136, 0.05);
+}
+
+tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.no-data {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 2rem;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-en-route {
+    background: #ff6b35;
+    color: #ffffff;
+}
+
+.status-in-transit {
+    background: #4ecdc4;
+    color: #ffffff;
+}
+
+.status-arrived-at-port {
+    background: #45b7d1;
+    color: #ffffff;
+}
+
+.status-customs-clearance {
+    background: #f7b731;
+    color: #000000;
+}
+
+.status-out-for-delivery {
+    background: #a55eea;
+    color: #ffffff;
+}
+
+.status-delivered {
+    background: #26de81;
+    color: #000000;
+}
+
+.status-pending {
+    background: #778ca3;
+    color: #ffffff;
+}
+
+.status-booked {
+    background: #fd79a8;
+    color: #ffffff;
+}
+
+.status-unknown {
+    background: #636e72;
+    color: #ffffff;
+}
+
+/* Alerts */
+.alert {
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 5px;
+    border-left: 4px solid;
+}
+
+.alert.success {
+    background: rgba(38, 222, 129, 0.1);
+    border-color: #26de81;
+    color: #26de81;
+}
+
+.alert.error {
+    background: rgba(255, 107, 53, 0.1);
+    border-color: #ff6b35;
+    color: #ff6b35;
+}
+
+.alert.warning {
+    background: rgba(247, 183, 49, 0.1);
+    border-color: #f7b731;
+    color: #f7b731;
+}
+
+/* Filters */
+.filters {
+    background: #1a1a1a;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin: 2rem 0;
+    border: 1px solid #333;
+}
+
+.filter-form {
+    display: flex;
+    gap: 1rem;
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+.filter-form .form-group {
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Inline Forms */
+.inline-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin: 0;
+}
+
+.status-select {
+    min-width: 150px;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Summary */
+.summary {
+    background: #1a1a1a;
+    padding: 1rem;
+    border-radius: 5px;
+    margin: 1rem 0;
+    border: 1px solid #333;
+}
+
+.summary p {
+    margin: 0;
+    color: #00ff88;
+    font-weight: 500;
+}
+
+/* Help Section */
+.help-section {
+    background: #1a1a1a;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin: 2rem 0;
+    border: 1px solid #333;
+}
+
+.help-section h3 {
+    color: #00ff88;
+    margin-top: 0;
+}
+
+.help-section ol {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.help-section li {
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-links {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .filter-form {
+        flex-direction: column;
+    }
+
+    .filter-form .form-group {
+        min-width: auto;
+    }
+
+    .inline-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    th, td {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .container {
+        padding: 0 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        padding: 2rem 1rem;
+    }
+
+    .hero h1 {
+        font-size: 1.5rem;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Main Content */
+main {
+    min-height: calc(100vh - 200px);
+    padding: 2rem 0;
+}
+
+/* Footer */
+footer {
+    background: #1a1a1a;
+    padding: 1rem;
+    text-align: center;
+    border-top: 1px solid #333;
+    color: #888;
+}
+
+/* Upload Form Specific */
+.upload-form {
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 10px;
+    border: 1px solid #333;
+    margin: 2rem 0;
+}
+
+/* Shipments Table Specific */
+.shipments-table {
+    font-size: 0.9rem;
+}
+
+.shipments-table th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container {
+    animation: fadeIn 0.5s ease-out;
+}
