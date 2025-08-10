@@ -6,7 +6,7 @@ echo "Starting shipment update process...\n";
 
 try {
     // Get all non-delivered shipments that need updating
-    $stmt = $pdo->query(''
+    $stmt = $pdo->query('
         SELECT shipment_id, tracking_number 
         FROM shipments 
         WHERE status != "Delivered" 
@@ -14,19 +14,19 @@ try {
             updated_at IS NULL 
             OR TIMESTAMPDIFF(HOUR, updated_at, NOW()) >= 12
         )
-    '');
+    ');
 
     $shipments = $stmt->fetchAll();
     $updatedCount = 0;
     $errors = 0;
 
     foreach ($shipments as $shipment) {
-        echo "Processing shipment ID: {$shipment[''shipment_id'']}\n";
-        
-        $identifiers = getShipmentIdentifiers($shipment[''shipment_id'']);
-        
+        echo "Processing shipment ID: {$shipment['shipment_id']}\n";
+
+        $identifiers = getShipmentIdentifiers($shipment['shipment_id']);
+
         if ($identifiers) {
-            if (refreshShipmentStatus($shipment[''shipment_id''], $identifiers)) {
+            if (refreshShipmentStatus($shipment['shipment_id'], $identifiers)) {
                 echo "  Status updated successfully\n";
                 $updatedCount++;
             } else {
@@ -42,32 +42,31 @@ try {
     }
 
     // Log the cron run
-    $stmt = $pdo->prepare(''
-        INSERT INTO logs (action_type, actor_id, details) 
-        VALUES (:type, :actor_id, :details)
-    '');
-    
+    $stmt = $pdo->prepare('
+            INSERT INTO logs (action_type, actor_id, details) 
+            VALUES (:type, :actor_id, :details)
+        ');
+
     $stmt->execute([
-        ''type'' => ''cron_run'',
-        ''actor_id'' => 0,
-        ''details'' => "Auto-update completed: $updatedCount shipment(s) updated, $errors error(s)"
+        'type' => 'cron_run',
+        'actor_id' => 0,
+        'details' => "Auto-update completed: $updatedCount shipment(s) updated, $errors error(s)"
     ]);
 
     echo "\nUpdate process completed:\n";
     echo "- Updated: $updatedCount shipments\n";
     echo "- Errors: $errors\n";
-
 } catch (Exception $e) {
     // Log any errors
-    $stmt = $pdo->prepare(''
+    $stmt = $pdo->prepare('
         INSERT INTO logs (action_type, actor_id, details) 
         VALUES (:type, :actor_id, :details)
-    '');
-    
+    ');
+
     $stmt->execute([
-        ''type'' => ''cron_error'',
-        ''actor_id'' => 0,
-        ''details'' => ''Cron error: '' . $e->getMessage()
+        'type' => 'cron_error',
+        'actor_id' => 0,
+        'details' => 'Cron error: ' . $e->getMessage()
     ]);
 
     echo "Error: " . $e->getMessage() . "\n";

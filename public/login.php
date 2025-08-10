@@ -36,16 +36,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     try {
                         require_once __DIR__ . '/../includes/twilio.php';
-
-                        if (sendWhatsAppOTP($user['phone'], $otp)) {
-                            $success = 'Verification code sent to your WhatsApp. Please check your messages and enter the code below.';
-                            $step = 2;
-                        } else {
-                            throw new Exception('Failed to send verification code');
+                        try {
+                            if (sendWhatsAppOTP($user['phone'], $otp)) {
+                                $success = 'Verification code sent to your WhatsApp. Please check your messages and enter the code below.';
+                                $step = 2;
+                            }
+                        } catch (Exception $e) {
+                            error_log('WhatsApp OTP Error: ' . $e->getMessage());
+                            $error = 'Could not send verification code: ' . htmlspecialchars($e->getMessage());
                         }
-                    } catch (Exception $e) {
-                        error_log('WhatsApp OTP Error: ' . $e->getMessage());
-                        $error = 'Could not send verification code. Please try again later or contact support.';
                     }
                 } else {
                     $error = 'Phone number not found. Please contact support to register your account.';
@@ -163,10 +162,11 @@ include __DIR__ . '/../includes/header.php';
                                         id="phone"
                                         name="phone"
                                         required
-                                        placeholder="Enter your registered phone number"
+                                        pattern="[0-9]{8,13}|\+961[0-9]{8,13}"
+                                        placeholder="e.g. 71706478 or +96171706478"
                                         value="<?php echo htmlspecialchars($phone); ?>"
                                         style="text-align: center; font-size: 1.1rem;">
-                                    <small>Format: +961XXXXXXXX or your registered number format</small>
+                                    <small>Enter your Lebanese mobile number (e.g. 71706478) or with country code (+96171706478). The system will auto-format for WhatsApp.</small>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 1rem;">
