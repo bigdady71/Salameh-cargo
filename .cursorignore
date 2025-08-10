@@ -1,0 +1,49 @@
+# Big dumps / binaries
+*.sql
+*.sqlite
+*.db
+*.zip
+*.rar
+*.7z
+*.pdf
+*.docx
+*.pptx
+
+# Media (keep icons/SVGs if helpful)
+assets/images/**
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.mp4
+*.mov
+
+# Excel / data fixtures
+*.xlsx
+*.xls
+*.csv
+/data/**
+
+# Vendor/tooling noise
+vendor/**
+node_modules/**
+dist/**
+build/**
+.cache/
+logs/**
+*.log
+.vscode/
+.idea/
+
+# WordPress exports you showed
+wpda_export.sql
+ZAHER05YW25.xlsx
+BTECH01YW25.xlsx
+
+# IMPORTANT: keep your project prompt available to the model
+!prompts/salameh-cargo-tracking-system-design.json
+.env
+.env.*
+*.pem
+includes/config.local.php

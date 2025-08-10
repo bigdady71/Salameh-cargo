@@ -1,0 +1,11 @@
+---
+description: Salameh Cargo project contract (PHP/HTML/CSS/JS, no frameworks). Attach on generate/refactor.
+alwaysApply: false
+globs:
+  - "**/*.php"
+  - "admin/**"
+  - "includes/**"
+  - "prompts/**"
+---
+
+@prompts/salameh_prompt.json
