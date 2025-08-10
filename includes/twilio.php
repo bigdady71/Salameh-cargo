@@ -19,7 +19,8 @@ function sendWhatsAppOTP(string $to, string $code): bool
         // Load Twilio credentials
         $accountSid = getenv('TWILIO_ACCOUNT_SID');
         $authToken = getenv('TWILIO_AUTH_TOKEN');
-        $fromNumber = getenv('TWILIO_WHATSAPP_NUMBER');
+        $fromNumber = getenv('TWILIO_WHATSAPP_FROM');
+        $templateSid = getenv('TWILIO_WHATSAPP_TEMPLATE_SID');
 
         if (!$accountSid || !$authToken || !$fromNumber) {
             throw new Exception('Twilio credentials not configured');
@@ -28,15 +29,25 @@ function sendWhatsAppOTP(string $to, string $code): bool
         // Initialize Twilio client
         $client = new Client($accountSid, $authToken);
 
-        // Compose and send message
-        $message = "Your Salameh Cargo verification code is: $code\n\nThis code will expire in 15 minutes.";
+        // Prepare message parameters
+        $params = [
+            'from' => $fromNumber
+        ];
 
+        if ($templateSid) {
+            // Use approved template
+            $params['contentSid'] = $templateSid;
+            $params['contentVariables'] = json_encode(['1' => $code]);
+        } else {
+            // Use plain text (sandbox mode)
+            $message = "Your verification code id: {$code} for Salameh Cargo. Please don't share it with anyone.";
+            $params['body'] = $message;
+        }
+
+        // Send the message
         $client->messages->create(
             'whatsapp:' . $to,
-            [
-                'from' => 'whatsapp:' . $fromNumber,
-                'body' => $message
-            ]
+            $params
         );
 
         // Log successful send
