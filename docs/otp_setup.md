@@ -43,9 +43,11 @@ TWILIO_WHATSAPP_TEMPLATE_SID=your_template_sid
 1. Go to Twilio Console > Messaging > Content Editor > Create Content
 2. Choose "WhatsApp Template"
 3. Create a template with the following content:
-   ```
+
+   ```text
    Your verification code id: {{1}} for Salameh Cargo. Please don't share it with anyone.
    ```
+
 4. Select category: "OTP"
 5. Submit for approval
 6. Once approved, copy the Content SID to `TWILIO_WHATSAPP_TEMPLATE_SID`

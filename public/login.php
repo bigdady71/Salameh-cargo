@@ -34,17 +34,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['login_otp'] = password_hash($otp, PASSWORD_DEFAULT);
                     $_SESSION['login_otp_time'] = time();
 
+                    require_once __DIR__ . '/../includes/twilio.php';
                     try {
-                        require_once __DIR__ . '/../includes/twilio.php';
-                        try {
-                            if (sendWhatsAppOTP($user['phone'], $otp)) {
-                                $success = 'Verification code sent to your WhatsApp. Please check your messages and enter the code below.';
-                                $step = 2;
-                            }
-                        } catch (Exception $e) {
-                            error_log('WhatsApp OTP Error: ' . $e->getMessage());
-                            $error = 'Could not send verification code: ' . htmlspecialchars($e->getMessage());
+                        if (sendWhatsAppOTP($user['phone'], $otp)) {
+                            $success = 'Verification code sent to your WhatsApp. Please check your messages and enter the code below.';
+                            $step = 2;
                         }
+                    } catch (Exception $e) {
+                        error_log('WhatsApp OTP Error: ' . $e->getMessage());
+                        $error = 'Could not send verification code: ' . htmlspecialchars($e->getMessage());
                     }
                 } else {
                     $error = 'Phone number not found. Please contact support to register your account.';

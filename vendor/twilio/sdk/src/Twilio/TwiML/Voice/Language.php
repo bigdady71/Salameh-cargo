@@ -13,12 +13,30 @@ use Twilio\TwiML\TwiML;
 
 class Language extends TwiML {
     /**
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**
      * Language constructor.
      *
      * @param array $attributes Optional attributes
      */
     public function __construct($attributes = []) {
         parent::__construct('Language', null, $attributes);
+        $this->attributes = $attributes;
+    }
+
+    /**
+     * Set an attribute for the Language element.
+     *
+     * @param string $name
+     * @param mixed $value
+     * @return $this
+     */
+    protected function setAttribute($name, $value): self {
+        $this->attributes[$name] = $value;
+        return $this;
     }
 
     /**

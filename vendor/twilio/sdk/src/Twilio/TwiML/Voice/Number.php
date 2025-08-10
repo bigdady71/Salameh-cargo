@@ -13,6 +13,11 @@ use Twilio\TwiML\TwiML;
 
 class Number extends TwiML {
     /**
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**
      * Number constructor.
      *
      * @param string $phoneNumber Phone Number to dial
@@ -20,6 +25,18 @@ class Number extends TwiML {
      */
     public function __construct($phoneNumber, $attributes = []) {
         parent::__construct('Number', $phoneNumber, $attributes);
+    }
+
+    /**
+     * Set an attribute for the Number element.
+     *
+     * @param string $name
+     * @param mixed $value
+     * @return $this
+     */
+    protected function setAttribute($name, $value) {
+        $this->attributes[$name] = $value;
+        return $this;
     }
 
     /**
