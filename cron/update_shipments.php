@@ -1,67 +1,76 @@
 <?php
-require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../includes/scrapers/tracktrace.php';
+require_once __DIR__ . "/../includes/db.php";
+require_once __DIR__ . "/../includes/refresh.php";
 
 echo "Starting shipment update process...\n";
 
 try {
-    // Get all shipments that are not delivered
-    $stmt = $pdo->prepare('SELECT * FROM shipments WHERE status != ?');
-    $stmt->execute(['Delivered']);
-    $shipments = $stmt->fetchAll();
+    // Get all non-delivered shipments that need updating
+    $stmt = $pdo->query(''
+        SELECT shipment_id, tracking_number 
+        FROM shipments 
+        WHERE status != "Delivered" 
+        AND (
+            updated_at IS NULL 
+            OR TIMESTAMPDIFF(HOUR, updated_at, NOW()) >= 12
+        )
+    '');
 
-    $updated = 0;
+    $shipments = $stmt->fetchAll();
+    $updatedCount = 0;
     $errors = 0;
 
     foreach ($shipments as $shipment) {
-        echo "Processing shipment: {$shipment['tracking_number']}\n";
-
-        // Try to get status from tracktrace if container number exists
-        if (!empty($shipment['container_number'])) {
-            $result = fetchStatus($shipment['container_number']);
-
-            if ($result) {
-                try {
-                    // Log the scrape result
-                    $stmt = $pdo->prepare('INSERT INTO shipment_scrapes (shipment_id, source_site, status, status_raw) VALUES (?, ?, ?, ?)');
-                    $stmt->execute([
-                        $shipment['shipment_id'],
-                        $result['source'],
-                        $result['status'],
-                        $result['status_raw'] ?? ''
-                    ]);
-
-                    // Update shipment status if it's different
-                    if ($result['status'] !== $shipment['status']) {
-                        $stmt = $pdo->prepare('UPDATE shipments SET status = ? WHERE shipment_id = ?');
-                        $stmt->execute([$result['status'], $shipment['shipment_id']]);
-
-                        echo "  Status updated: {$shipment['status']} -> {$result['status']}\n";
-                        $updated++;
-                    } else {
-                        echo "  Status unchanged: {$shipment['status']}\n";
-                    }
-                } catch (PDOException $e) {
-                    echo "  Database error: " . $e->getMessage() . "\n";
-                    $errors++;
-                }
+        echo "Processing shipment ID: {$shipment[''shipment_id'']}\n";
+        
+        $identifiers = getShipmentIdentifiers($shipment[''shipment_id'']);
+        
+        if ($identifiers) {
+            if (refreshShipmentStatus($shipment[''shipment_id''], $identifiers)) {
+                echo "  Status updated successfully\n";
+                $updatedCount++;
             } else {
-                echo "  No status found for container: {$shipment['container_number']}\n";
+                echo "  No new status found\n";
             }
         } else {
-            echo "  No container number for tracking: {$shipment['tracking_number']}\n";
+            echo "  No tracking identifiers found\n";
+            $errors++;
         }
 
-        // Add a small delay to avoid overwhelming the server
+        // Add a small delay to avoid overwhelming servers
         usleep(500000); // 0.5 seconds
     }
 
-    echo "\nUpdate completed:\n";
-    echo "- Shipments processed: " . count($shipments) . "\n";
-    echo "- Status updates: $updated\n";
+    // Log the cron run
+    $stmt = $pdo->prepare(''
+        INSERT INTO logs (action_type, actor_id, details) 
+        VALUES (:type, :actor_id, :details)
+    '');
+    
+    $stmt->execute([
+        ''type'' => ''cron_run'',
+        ''actor_id'' => 0,
+        ''details'' => "Auto-update completed: $updatedCount shipment(s) updated, $errors error(s)"
+    ]);
+
+    echo "\nUpdate process completed:\n";
+    echo "- Updated: $updatedCount shipments\n";
     echo "- Errors: $errors\n";
+
 } catch (Exception $e) {
-    echo "Fatal error: " . $e->getMessage() . "\n";
+    // Log any errors
+    $stmt = $pdo->prepare(''
+        INSERT INTO logs (action_type, actor_id, details) 
+        VALUES (:type, :actor_id, :details)
+    '');
+    
+    $stmt->execute([
+        ''type'' => ''cron_error'',
+        ''actor_id'' => 0,
+        ''details'' => ''Cron error: '' . $e->getMessage()
+    ]);
+
+    echo "Error: " . $e->getMessage() . "\n";
     exit(1);
 }
 

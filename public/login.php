@@ -15,25 +15,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['phone']) && $step === 1) {
             // Step 1: Request OTP
             $phone = trim($_POST['phone']);
-            
+
             if (empty($phone)) {
                 $error = 'Please enter your phone number.';
             } else {
                 // Check if user exists
-                $stmt = $pdo->prepare('SELECT user_id, full_name FROM users WHERE phone = ?');
+                $stmt = $pdo->prepare('SELECT user_id, full_name, phone FROM users WHERE phone = ?');
                 $stmt->execute([$phone]);
                 $user = $stmt->fetch();
-                
+
                 if ($user) {
                     // Store phone in session for step 2
-                    $_SESSION['login_phone'] = $phone;
+                    $_SESSION['login_phone'] = $user['phone'];
                     $_SESSION['login_user_id'] = $user['user_id'];
-                    
-                    // TODO: Send actual OTP via WhatsApp/SMS
-                    // For now, just simulate the process
-                    
-                    $success = 'OTP sent to your WhatsApp! Please check your messages and enter the code below.';
-                    $step = 2;
+
+                    // Generate a 6-digit OTP
+                    $otp = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+                    $_SESSION['login_otp'] = password_hash($otp, PASSWORD_DEFAULT);
+                    $_SESSION['login_otp_time'] = time();
+
+                    try {
+                        require_once __DIR__ . '/../includes/twilio.php';
+
+                        if (sendWhatsAppOTP($user['phone'], $otp)) {
+                            $success = 'Verification code sent to your WhatsApp. Please check your messages and enter the code below.';
+                            $step = 2;
+                        } else {
+                            throw new Exception('Failed to send verification code');
+                        }
+                    } catch (Exception $e) {
+                        error_log('WhatsApp OTP Error: ' . $e->getMessage());
+                        $error = 'Could not send verification code. Please try again later or contact support.';
+                    }
                 } else {
                     $error = 'Phone number not found. Please contact support to register your account.';
                 }
@@ -41,26 +54,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (isset($_POST['otp']) && $step === 2) {
             // Step 2: Verify OTP
             $otp = trim($_POST['otp']);
-            
+
             if (empty($otp)) {
                 $error = 'Please enter the OTP code.';
-            } elseif (!isset($_SESSION['login_phone']) || !isset($_SESSION['login_user_id'])) {
+            } elseif (!isset($_SESSION['login_phone']) || !isset($_SESSION['login_user_id']) || !isset($_SESSION['login_otp']) || !isset($_SESSION['login_otp_time'])) {
                 $error = 'Session expired. Please start over.';
                 $step = 1;
+            } elseif (time() - $_SESSION['login_otp_time'] > 900) { // 15 minutes expiry
+                $error = 'Verification code has expired. Please request a new one.';
+                unset($_SESSION['login_otp']);
+                unset($_SESSION['login_otp_time']);
+                $step = 1;
             } else {
-                // TODO: Verify actual OTP
-                // For now, accept any 4-6 digit code as demo
-                if (preg_match('/^\d{4,6}$/', $otp)) {
+                // Verify submitted OTP
+                if (password_verify($otp, $_SESSION['login_otp'])) {
                     $_SESSION['user_id'] = $_SESSION['login_user_id'];
-                    
+
+                    // Log successful login
+                    $stmt = $pdo->prepare('
+                        INSERT INTO logs (action_type, actor_id, details) 
+                        VALUES (:type, :actor_id, :details)
+                    ');
+
+                    $stmt->execute([
+                        'type' => 'login_success',
+                        'actor_id' => $_SESSION['login_user_id'],
+                        'details' => 'Successful login via WhatsApp OTP'
+                    ]);
+
                     // Clean up login session data
                     unset($_SESSION['login_phone']);
                     unset($_SESSION['login_user_id']);
-                    
+                    unset($_SESSION['login_otp']);
+                    unset($_SESSION['login_otp_time']);
+
                     header('Location: dashboard.php');
                     exit;
                 } else {
-                    $error = 'Invalid OTP code. Please enter a valid 4-6 digit code.';
+                    // Log failed attempt
+                    $stmt = $pdo->prepare('
+                        INSERT INTO logs (action_type, actor_id, details) 
+                        VALUES (:type, :actor_id, :details)
+                    ');
+
+                    $stmt->execute([
+                        'type' => 'login_failed',
+                        'actor_id' => $_SESSION['login_user_id'],
+                        'details' => 'Invalid OTP attempt'
+                    ]);
+
+                    $error = 'Invalid verification code. Please try again.';
                 }
             }
         }
@@ -83,10 +126,10 @@ include __DIR__ . '/../includes/header.php';
             <div class="hero__content">
                 <h1 class="hero__title" style="font-size: 2.5rem;">Customer Login</h1>
                 <p class="hero__subtitle">Access your shipment dashboard with our secure WhatsApp OTP verification.</p>
-                
+
                 <div style="max-width: 500px; margin: 3rem auto;">
                     <div class="card" style="padding: 3rem; text-align: left;">
-                        
+
                         <?php if ($error): ?>
                             <div class="alert error">
                                 <i class="fas fa-exclamation-circle"></i>
@@ -113,16 +156,16 @@ include __DIR__ . '/../includes/header.php';
 
                             <form method="post" action="?step=1">
                                 <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
-                                
+
                                 <div class="form-group">
                                     <label for="phone">Phone Number</label>
-                                    <input type="tel" 
-                                           id="phone" 
-                                           name="phone" 
-                                           required 
-                                           placeholder="Enter your registered phone number"
-                                           value="<?php echo htmlspecialchars($phone); ?>"
-                                           style="text-align: center; font-size: 1.1rem;">
+                                    <input type="tel"
+                                        id="phone"
+                                        name="phone"
+                                        required
+                                        placeholder="Enter your registered phone number"
+                                        value="<?php echo htmlspecialchars($phone); ?>"
+                                        style="text-align: center; font-size: 1.1rem;">
                                     <small>Format: +961XXXXXXXX or your registered number format</small>
                                 </div>
 
@@ -147,17 +190,17 @@ include __DIR__ . '/../includes/header.php';
 
                             <form method="post" action="?step=2">
                                 <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
-                                
+
                                 <div class="form-group">
                                     <label for="otp">Verification Code</label>
-                                    <input type="text" 
-                                           id="otp" 
-                                           name="otp" 
-                                           required 
-                                           placeholder="Enter 4-6 digit code"
-                                           maxlength="6"
-                                           pattern="\d{4,6}"
-                                           style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem; font-weight: bold;">
+                                    <input type="text"
+                                        id="otp"
+                                        name="otp"
+                                        required
+                                        placeholder="Enter 4-6 digit code"
+                                        maxlength="6"
+                                        pattern="\d{4,6}"
+                                        style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem; font-weight: bold;">
                                     <small>Check your WhatsApp messages for the verification code</small>
                                 </div>
 
@@ -205,9 +248,9 @@ include __DIR__ . '/../includes/header.php';
                             <li>View and track all your shipments securely</li>
                         </ol>
                         <p style="margin-top: 1.5rem;">
-                            <strong>Need help?</strong> 
-                            <a href="https://wa.me/96171123456?text=I%20need%20help%20logging%20in%20to%20my%20account" 
-                               target="_blank" style="color: var(--accent);">
+                            <strong>Need help?</strong>
+                            <a href="https://wa.me/96171123456?text=I%20need%20help%20logging%20in%20to%20my%20account"
+                                target="_blank" style="color: var(--accent);">
                                 <i class="fab fa-whatsapp"></i>
                                 Contact us on WhatsApp
                             </a>
@@ -220,27 +263,27 @@ include __DIR__ . '/../includes/header.php';
 </main>
 
 <script>
-// Auto-focus on input fields
-document.addEventListener('DOMContentLoaded', function() {
-    const phoneInput = document.getElementById('phone');
-    const otpInput = document.getElementById('otp');
-    
-    if (phoneInput) {
-        phoneInput.focus();
-    } else if (otpInput) {
-        otpInput.focus();
-        
-        // Auto-submit when OTP is complete (optional enhancement)
-        otpInput.addEventListener('input', function() {
-            if (this.value.length === 6) {
-                // Small delay to let user see the complete code
-                setTimeout(() => {
-                    this.form.submit();
-                }, 500);
-            }
-        });
-    }
-});
+    // Auto-focus on input fields
+    document.addEventListener('DOMContentLoaded', function() {
+        const phoneInput = document.getElementById('phone');
+        const otpInput = document.getElementById('otp');
+
+        if (phoneInput) {
+            phoneInput.focus();
+        } else if (otpInput) {
+            otpInput.focus();
+
+            // Auto-submit when OTP is complete (optional enhancement)
+            otpInput.addEventListener('input', function() {
+                if (this.value.length === 6) {
+                    // Small delay to let user see the complete code
+                    setTimeout(() => {
+                        this.form.submit();
+                    }, 500);
+                }
+            });
+        }
+    });
 </script>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
