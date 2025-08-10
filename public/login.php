@@ -2,29 +2,245 @@
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 
+$error = '';
+$success = '';
+$step = isset($_GET['step']) ? (int)$_GET['step'] : 1;
+$phone = isset($_SESSION['login_phone']) ? $_SESSION['login_phone'] : '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['phone'])) {
-        $phone = $_POST['phone'];
-        $stmt = $pdo->prepare('SELECT user_id FROM users WHERE phone = ?');
-        $stmt->execute([$phone]);
-        $user = $stmt->fetch();
-        if ($user) {
-            $_SESSION['user_id'] = $user['user_id'];
-            header('Location: dashboard.php');
-            exit;
-        } else {
-            echo 'Phone number not found.';
+    // Verify CSRF token
+    if (!isset($_POST['csrf_token']) || !verifyCsrfToken($_POST['csrf_token'])) {
+        $error = 'Invalid security token. Please try again.';
+    } else {
+        if (isset($_POST['phone']) && $step === 1) {
+            // Step 1: Request OTP
+            $phone = trim($_POST['phone']);
+            
+            if (empty($phone)) {
+                $error = 'Please enter your phone number.';
+            } else {
+                // Check if user exists
+                $stmt = $pdo->prepare('SELECT user_id, full_name FROM users WHERE phone = ?');
+                $stmt->execute([$phone]);
+                $user = $stmt->fetch();
+                
+                if ($user) {
+                    // Store phone in session for step 2
+                    $_SESSION['login_phone'] = $phone;
+                    $_SESSION['login_user_id'] = $user['user_id'];
+                    
+                    // TODO: Send actual OTP via WhatsApp/SMS
+                    // For now, just simulate the process
+                    
+                    $success = 'OTP sent to your WhatsApp! Please check your messages and enter the code below.';
+                    $step = 2;
+                } else {
+                    $error = 'Phone number not found. Please contact support to register your account.';
+                }
+            }
+        } elseif (isset($_POST['otp']) && $step === 2) {
+            // Step 2: Verify OTP
+            $otp = trim($_POST['otp']);
+            
+            if (empty($otp)) {
+                $error = 'Please enter the OTP code.';
+            } elseif (!isset($_SESSION['login_phone']) || !isset($_SESSION['login_user_id'])) {
+                $error = 'Session expired. Please start over.';
+                $step = 1;
+            } else {
+                // TODO: Verify actual OTP
+                // For now, accept any 4-6 digit code as demo
+                if (preg_match('/^\d{4,6}$/', $otp)) {
+                    $_SESSION['user_id'] = $_SESSION['login_user_id'];
+                    
+                    // Clean up login session data
+                    unset($_SESSION['login_phone']);
+                    unset($_SESSION['login_user_id']);
+                    
+                    header('Location: dashboard.php');
+                    exit;
+                } else {
+                    $error = 'Invalid OTP code. Please enter a valid 4-6 digit code.';
+                }
+            }
         }
     }
+}
+
+// Redirect if already logged in
+if (isset($_SESSION['user_id'])) {
+    header('Location: dashboard.php');
+    exit;
 }
 
 include __DIR__ . '/../includes/header.php';
 ?>
 
-<form method='post'>
-    <label for='phone'>Phone:</label>
-    <input type='text' id='phone' name='phone' required>
-    <button type='submit'>Send OTP</button>
-</form>
+<main>
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero" style="min-height: 70vh;">
+            <div class="hero__content">
+                <h1 class="hero__title" style="font-size: 2.5rem;">Customer Login</h1>
+                <p class="hero__subtitle">Access your shipment dashboard with our secure WhatsApp OTP verification.</p>
+                
+                <div style="max-width: 500px; margin: 3rem auto;">
+                    <div class="card" style="padding: 3rem; text-align: left;">
+                        
+                        <?php if ($error): ?>
+                            <div class="alert error">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <?php echo htmlspecialchars($error); ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if ($success): ?>
+                            <div class="alert success">
+                                <i class="fas fa-check-circle"></i>
+                                <?php echo htmlspecialchars($success); ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if ($step === 1): ?>
+                            <!-- Step 1: Phone Number Input -->
+                            <div style="text-align: center; margin-bottom: 2rem;">
+                                <div style="background: var(--card-hover); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                    <i class="fas fa-mobile-alt" style="font-size: 2rem; color: var(--accent);"></i>
+                                </div>
+                                <h3 style="color: var(--text); margin-bottom: 0.5rem;">Enter Your Phone Number</h3>
+                                <p style="color: var(--muted); font-size: 0.95rem;">We'll send you a verification code via WhatsApp</p>
+                            </div>
+
+                            <form method="post" action="?step=1">
+                                <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                                
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" 
+                                           id="phone" 
+                                           name="phone" 
+                                           required 
+                                           placeholder="Enter your registered phone number"
+                                           value="<?php echo htmlspecialchars($phone); ?>"
+                                           style="text-align: center; font-size: 1.1rem;">
+                                    <small>Format: +961XXXXXXXX or your registered number format</small>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 1rem;">
+                                    <i class="fab fa-whatsapp"></i>
+                                    Send OTP via WhatsApp
+                                </button>
+                            </form>
+
+                        <?php else: ?>
+                            <!-- Step 2: OTP Input -->
+                            <div style="text-align: center; margin-bottom: 2rem;">
+                                <div style="background: var(--card-hover); border-radius: 50%; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                    <i class="fas fa-key" style="font-size: 2rem; color: var(--accent);"></i>
+                                </div>
+                                <h3 style="color: var(--text); margin-bottom: 0.5rem;">Enter Verification Code</h3>
+                                <p style="color: var(--muted); font-size: 0.95rem;">
+                                    We sent a verification code to<br>
+                                    <strong style="color: var(--accent);"><?php echo htmlspecialchars($phone); ?></strong>
+                                </p>
+                            </div>
+
+                            <form method="post" action="?step=2">
+                                <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                                
+                                <div class="form-group">
+                                    <label for="otp">Verification Code</label>
+                                    <input type="text" 
+                                           id="otp" 
+                                           name="otp" 
+                                           required 
+                                           placeholder="Enter 4-6 digit code"
+                                           maxlength="6"
+                                           pattern="\d{4,6}"
+                                           style="text-align: center; font-size: 1.5rem; letter-spacing: 0.5rem; font-weight: bold;">
+                                    <small>Check your WhatsApp messages for the verification code</small>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem; margin-top: 1rem;">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    Verify & Login
+                                </button>
+
+                                <div style="text-align: center; margin-top: 1.5rem;">
+                                    <a href="?step=1" class="btn btn-secondary" style="padding: 0.75rem 1.5rem;">
+                                        <i class="fas fa-arrow-left"></i>
+                                        Use Different Number
+                                    </a>
+                                </div>
+                            </form>
+
+                            <div style="text-align: center; margin-top: 2rem; padding: 1rem; background: var(--card); border-radius: 8px; border-left: 4px solid var(--accent);">
+                                <p style="color: var(--muted); font-size: 0.9rem; margin: 0;">
+                                    <i class="fas fa-info-circle" style="color: var(--accent);"></i>
+                                    Didn't receive the code? Please wait 60 seconds before requesting a new one.
+                                </p>
+                            </div>
+
+                        <?php endif; ?>
+
+                        <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+                            <p style="color: var(--muted); font-size: 0.9rem;">
+                                Don't have an account?<br>
+                                <a href="/public/contact.php" style="color: var(--accent);">
+                                    Contact our team to register
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help Section -->
+                <div style="max-width: 600px; margin: 3rem auto;">
+                    <div class="help-section">
+                        <h3><i class="fas fa-question-circle"></i> How does OTP login work?</h3>
+                        <ol>
+                            <li>Enter your registered phone number</li>
+                            <li>We'll send you a verification code via WhatsApp</li>
+                            <li>Enter the code to access your dashboard</li>
+                            <li>View and track all your shipments securely</li>
+                        </ol>
+                        <p style="margin-top: 1.5rem;">
+                            <strong>Need help?</strong> 
+                            <a href="https://wa.me/96171123456?text=I%20need%20help%20logging%20in%20to%20my%20account" 
+                               target="_blank" style="color: var(--accent);">
+                                <i class="fab fa-whatsapp"></i>
+                                Contact us on WhatsApp
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<script>
+// Auto-focus on input fields
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneInput = document.getElementById('phone');
+    const otpInput = document.getElementById('otp');
+    
+    if (phoneInput) {
+        phoneInput.focus();
+    } else if (otpInput) {
+        otpInput.focus();
+        
+        // Auto-submit when OTP is complete (optional enhancement)
+        otpInput.addEventListener('input', function() {
+            if (this.value.length === 6) {
+                // Small delay to let user see the complete code
+                setTimeout(() => {
+                    this.form.submit();
+                }, 500);
+            }
+        });
+    }
+});
+</script>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
