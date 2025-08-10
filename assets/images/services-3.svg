@@ -1,0 +1,16 @@
+^<svg
+viewBox=0 0 400 300
+xmlns=http://www.w3.org/2000/svg^>^<rect
+width=100%%
+height=100%%
+fill=#0F365F
+/^>^<text
+x=50%%
+y=50%%
+text-anchor=middle
+dominant-baseline=central
+fill=rgba(233,238,244,0.6)
+font-size=24
+font-family=system-ui, sans-serif
+font-weight=600^>SERVICE
+3^</text^>^</svg^>

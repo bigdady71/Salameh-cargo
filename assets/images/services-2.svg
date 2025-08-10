@@ -1,0 +1,27 @@
+^<svg
+viewBox=0 0 400 300
+xmlns=http://www.w3.org/2000/svg^>^<defs^>^<linearGradient
+id=servicesGradient2
+x1=0%%
+y1=0%%
+x2=100%%
+y2=100%%^>^<stop
+offset=0%%
+style=stop-color:#0F365F;stop-opacity:1
+/^>^<stop
+offset=100%%
+style=stop-color:#13406F;stop-opacity:1
+/^>^</linearGradient^>^</defs^>^<rect
+width=100%%
+height=100%%
+fill=url(#servicesGradient2)
+/^>^<text
+x=50%%
+y=50%%
+text-anchor=middle
+dominant-baseline=central
+fill=rgba(233,238,244,0.6)
+font-size=24
+font-family=system-ui, sans-serif
+font-weight=600^>SERVICE
+2^</text^>^</svg^>
