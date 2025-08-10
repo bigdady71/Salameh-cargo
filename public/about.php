@@ -1,0 +1,1 @@
+<?php require_once __DIR__ . '/../includes/db.php'; require_once __DIR__ . '/../includes/auth.php'; include __DIR__ . '/../includes/header.php'; ?><h1>About Us</h1><p>Salameh Cargo provides reliable shipping and tracking services.</p><?php include __DIR__ . '/../includes/footer.php'; ?>

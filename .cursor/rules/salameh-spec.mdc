@@ -7,5 +7,5 @@ globs:
   - "includes/**"
   - "prompts/**"
 ---
-
 @prompts/salameh_prompt.json
+@database/schema.sql

@@ -1,0 +1,1 @@
+<?php require_once __DIR__ . '/../includes/db.php'; require_once __DIR__ . '/../includes/auth.php'; include __DIR__ . '/../includes/header.php'; ?><h1>Contact Us</h1><a href='https://wa.me/1234567890'>Chat with us on WhatsApp</a><?php include __DIR__ . '/../includes/footer.php'; ?>
