@@ -10,24 +10,47 @@ $searched = false;
 if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
     $query = trim($_GET['query']);
     $searched = true;
-    
+
     // Search across multiple fields using prepared statements
     $stmt = $pdo->prepare('
-        SELECT s.*, u.full_name, u.phone 
+        SELECT 
+            s.shipment_id, 
+            s.tracking_number,
+            s.container_number,
+            s.bl_number,
+            s.shipping_code,
+            s.status,
+            s.cbm,
+            s.cartons,
+            s.weight,
+            s.gross_weight,
+            s.total_amount,
+            s.created_at,
+            s.updated_at,
+            u.full_name,
+            u.phone,
+            COALESCE(ss.source_site, "Database") as source,
+            ss.scrape_time
         FROM shipments s 
         LEFT JOIN users u ON s.user_id = u.user_id 
+        LEFT JOIN (
+            SELECT shipment_id, source_site, scrape_time,
+                   ROW_NUMBER() OVER (PARTITION BY shipment_id ORDER BY scrape_time DESC) as rn
+            FROM shipment_scrapes
+        ) ss ON ss.shipment_id = s.shipment_id AND ss.rn = 1
         WHERE s.tracking_number = ? 
            OR s.container_number = ? 
            OR s.bl_number = ?
            OR u.phone = ? 
            OR u.full_name LIKE ?
            OR s.shipping_code = ?
+           OR u.shipping_code = ?
         ORDER BY s.created_at DESC
         LIMIT 50
     ');
-    
+
     $likeQuery = '%' . $query . '%';
-    $stmt->execute([$query, $query, $query, $query, $likeQuery, $query]);
+    $stmt->execute([$query, $query, $query, $query, $likeQuery, $query, $query]);
     $shipments = $stmt->fetchAll();
 }
 ?>
@@ -39,7 +62,7 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
             <div class="hero__content">
                 <h1 class="hero__title">Track Your Shipment</h1>
                 <p class="hero__subtitle">Enter your tracking number, container number, BL number, phone, or name to track your shipment in real-time.</p>
-                
+
                 <div style="max-width: 600px; margin: 3rem auto;">
                     <div class="card" style="padding: 2rem;">
                         <form method="GET" action="track.php" class="search-form">
@@ -48,13 +71,13 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
                                     <i class="fas fa-search"></i>
                                     Search by any identifier
                                 </label>
-                                <input type="text" 
-                                       id="query" 
-                                       name="query" 
-                                       required 
-                                       placeholder="Enter tracking number, container, BL, phone, or customer name"
-                                       value="<?php echo htmlspecialchars($query); ?>"
-                                       style="text-align: center; font-size: 1.1rem; padding: 1rem;">
+                                <input type="text"
+                                    id="query"
+                                    name="query"
+                                    required
+                                    placeholder="Enter tracking number, container, BL, phone, or customer name"
+                                    value="<?php echo htmlspecialchars($query); ?>"
+                                    style="text-align: center; font-size: 1.1rem; padding: 1rem;">
                                 <small style="text-align: center; display: block; margin-top: 0.5rem;">
                                     Examples: TR123456, MSKU1234567, +961XXXXXXXX, John Doe
                                 </small>
@@ -104,7 +127,7 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
                                             <td>
                                                 <strong><?php echo htmlspecialchars($shipment['tracking_number']); ?></strong>
                                                 <?php if ($shipment['bl_number']): ?>
-                                                    <br><small style="color: var(--muted);">BL: <?php echo htmlspecialchars($shipment['bl_number']); ?></small>
+                                                    <br><small style="color: var(--muted);"><?php echo htmlspecialchars($shipment['bl_number']); ?></small>
                                                 <?php endif; ?>
                                             </td>
                                             <td>
@@ -113,13 +136,13 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
                                             <td>
                                                 <?php echo $shipment['full_name'] ? htmlspecialchars($shipment['full_name']) : '<span style="color: var(--muted);">Unknown</span>'; ?>
                                                 <?php if ($shipment['shipping_code']): ?>
-                                                    <br><small style="color: var(--muted);">Code: <?php echo htmlspecialchars($shipment['shipping_code']); ?></small>
+                                                    <br><small style="color: var(--muted);"><?php echo htmlspecialchars($shipment['shipping_code']); ?></small>
                                                 <?php endif; ?>
                                             </td>
                                             <td>
                                                 <?php if ($shipment['phone']): ?>
-                                                    <a href="tel:<?php echo htmlspecialchars($shipment['phone']); ?>" 
-                                                       style="color: var(--accent);">
+                                                    <a href="tel:<?php echo htmlspecialchars($shipment['phone']); ?>"
+                                                        style="color: var(--accent);">
                                                         <?php echo htmlspecialchars($shipment['phone']); ?>
                                                     </a>
                                                 <?php else: ?>
@@ -148,9 +171,9 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
                                                 </div>
                                             </td>
                                             <td>
-                                                <?php 
+                                                <?php
                                                 $updatedAt = $shipment['updated_at'] ? $shipment['updated_at'] : $shipment['created_at'];
-                                                echo date('M j, Y', strtotime($updatedAt)); 
+                                                echo date('M j, Y', strtotime($updatedAt));
                                                 ?>
                                                 <br>
                                                 <small style="color: var(--muted);">
@@ -174,21 +197,22 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
                         <!-- Summary Section -->
                         <div class="summary" style="margin-top: 2rem;">
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                                <p><i class="fas fa-list" style="color: var(--accent);"></i> 
-                                   <strong>Total Results:</strong> <?php echo count($shipments); ?></p>
-                                
-                                <?php 
+                                <p><i class="fas fa-list" style="color: var(--accent);"></i>
+                                    <strong>Total Results:</strong> <?php echo count($shipments); ?>
+                                </p>
+
+                                <?php
                                 $statusCounts = [];
                                 foreach ($shipments as $shipment) {
                                     $status = $shipment['status'];
                                     $statusCounts[$status] = ($statusCounts[$status] ?? 0) + 1;
                                 }
                                 ?>
-                                
+
                                 <?php foreach ($statusCounts as $status => $count): ?>
                                     <p><span class="status-badge status-<?php echo strtolower(str_replace([' ', '/', '&'], ['-', '-', 'and'], $status)); ?>" style="margin-right: 0.5rem;">
-                                        <?php echo htmlspecialchars($status); ?>
-                                    </span> <?php echo $count; ?></p>
+                                            <?php echo htmlspecialchars($status); ?>
+                                        </span> <?php echo $count; ?></p>
                                 <?php endforeach; ?>
                             </div>
                         </div>
@@ -197,15 +221,70 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
                         <!-- No Results -->
                         <div class="hero" style="min-height: 40vh;">
                             <div class="hero__content">
-                                <div style="background: var(--card); border-radius: 50%; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; margin: 0 auto 2rem;">
+                                <div class="no-results">
+                                    <div class="no-results__icon">
+                                        <i class="fas fa-search"></i>
+                                    </div>
+                                    <h2 class="no-results__title">No Shipments Found</h2>
+                                    <p class="no-results__message">
+                                        No shipments match "<?php echo htmlspecialchars($query); ?>". Please verify your:
+                                    </p>
+                                    <ul class="no-results__tips">
+                                        <li>Tracking number</li>
+                                        <li>Container number</li>
+                                        <li>Bill of lading number</li>
+                                        <li>Phone number</li>
+                                        <li>Shipping code</li>
+                                    </ul>
+                                    <style>
+                                        .no-results {
+                                            text-align: center;
+                                            padding: 2rem;
+                                        }
+
+                                        .no-results__icon {
+                                            background: var(--card);
+                                            border-radius: 50%;
+                                            width: 100px;
+                                            height: 100px;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            margin: 0 auto 2rem;
+                                            font-size: 2rem;
+                                            color: var(--muted);
+                                        }
+
+                                        .no-results__title {
+                                            color: var(--text);
+                                            margin-bottom: 1rem;
+                                        }
+
+                                        .no-results__message {
+                                            color: var(--muted);
+                                            margin-bottom: 1rem;
+                                        }
+
+                                        .no-results__tips {
+                                            list-style: none;
+                                            padding: 0;
+                                            margin: 0;
+                                            color: var(--muted);
+                                        }
+
+                                        .no-results__tips li {
+                                            display: inline-block;
+                                            margin: 0.25rem 0.5rem;
+                                        }
+                                    </style>
                                     <i class="fas fa-search" style="font-size: 2.5rem; color: var(--muted);"></i>
                                 </div>
                                 <h2 style="color: var(--text); font-size: 1.75rem; margin-bottom: 1rem;">No Shipments Found</h2>
                                 <p style="color: var(--muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto 2rem;">
-                                    We couldn't find any shipments matching "<strong><?php echo htmlspecialchars($query); ?></strong>". 
+                                    We couldn't find any shipments matching "<strong><?php echo htmlspecialchars($query); ?></strong>".
                                     Please check your search term and try again.
                                 </p>
-                                
+
                                 <div style="margin: 2rem 0;">
                                     <h4 style="color: var(--accent); margin-bottom: 1rem;">Search Tips:</h4>
                                     <ul style="color: var(--muted); list-style: none; padding: 0; line-height: 2;">
@@ -221,8 +300,8 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
                                         <i class="fas fa-search"></i>
                                         Try Another Search
                                     </a>
-                                    <a href="https://wa.me/96171123456?text=I%20need%20help%20tracking%20my%20shipment%20with%20identifier:%20<?php echo urlencode($query); ?>" 
-                                       class="btn btn-secondary" target="_blank">
+                                    <a href="https://wa.me/96171123456?text=I%20need%20help%20tracking%20my%20shipment%20with%20identifier:%20<?php echo urlencode($query); ?>"
+                                        class="btn btn-secondary" target="_blank">
                                         <i class="fab fa-whatsapp"></i>
                                         Get Help via WhatsApp
                                     </a>
@@ -279,21 +358,21 @@ if (isset($_GET['query']) && !empty(trim($_GET['query']))) {
 </main>
 
 <script>
-// Auto-focus on search input
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('query');
-    if (searchInput && !searchInput.value) {
-        searchInput.focus();
-    }
-});
-
-// Enhance table responsiveness
-if (window.innerWidth <= 768) {
-    document.querySelectorAll('.shipments-table th, .shipments-table td').forEach(cell => {
-        cell.style.fontSize = '0.8rem';
-        cell.style.padding = '0.5rem 0.25rem';
+    // Auto-focus on search input
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('query');
+        if (searchInput && !searchInput.value) {
+            searchInput.focus();
+        }
     });
-}
+
+    // Enhance table responsiveness
+    if (window.innerWidth <= 768) {
+        document.querySelectorAll('.shipments-table th, .shipments-table td').forEach(cell => {
+            cell.style.fontSize = '0.8rem';
+            cell.style.padding = '0.5rem 0.25rem';
+        });
+    }
 </script>
 
 <?php include __DIR__ . '/../includes/footer.php'; ?>
