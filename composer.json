@@ -1,6 +1,7 @@
 {
     "require": {
         "phpoffice/phpspreadsheet": "^1.29",
-        "twilio/sdk": "^8.7"
+        "twilio/sdk": "^8.7",
+        "vlucas/phpdotenv": "^5.5"
     }
 }

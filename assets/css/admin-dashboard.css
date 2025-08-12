@@ -1,15 +1,15 @@
 .admin-dashboard {
-    --primary: #00ff88;
-    --secondary: #ff00ff;
-    --accent: #00ffff;
-    --bg-dark: #1a1a1a;
-    --bg-card: #2a2a2a;
-    --text: #ffffff;
-    --text-muted: #888888;
-    --danger: #ff4444;
-    --warning: #ffbb33;
-    --success: #00C851;
-    --info: #33b5e5;
+    --primary: #2c7be5;
+    --secondary: #6c757d;
+    --accent: #2c7be5;
+    --bg-light: #ffffff;
+    --bg-card: #f8f9fa;
+    --text: #333333;
+    --text-muted: #6c757d;
+    --danger: #dc3545;
+    --warning: #ffc107;
+    --success: #28a745;
+    --info: #17a2b8;
 }
 
 /* Admin Dashboard Grid */
@@ -22,15 +22,17 @@
 
 /* Dashboard Cards */
 .dashboard-card {
-    background: var(--bg-card);
+    background: var(--bg-light);
     border-radius: 10px;
     padding: 1.5rem;
-    box-shadow: 0 4px 6px rgba(0, 255, 136, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s;
+    border: 1px solid #e9ecef;
 }
 
 .dashboard-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
 }
 
 .dashboard-card h2 {
@@ -49,10 +51,11 @@
 }
 
 .status-item {
-    background: var(--bg-dark);
+    background: var(--bg-light);
     padding: 1rem;
     border-radius: 8px;
     position: relative;
+    border: 1px solid #e9ecef;
 }
 
 .status-header {
@@ -64,7 +67,7 @@
 
 .progress-bar {
     height: 4px;
-    background: rgba(255, 255, 255, 0.1);
+    background: #e9ecef;
     border-radius: 2px;
     overflow: hidden;
     margin: 0.5rem 0;
@@ -88,21 +91,25 @@
     flex-direction: column;
     align-items: center;
     padding: 1rem;
-    background: var(--bg-dark);
+    background: var(--bg-light);
     border-radius: 8px;
     text-decoration: none;
     color: var(--text);
     transition: all 0.2s;
+    border: 1px solid #e9ecef;
 }
 
 .action-btn:hover {
     transform: translateY(-2px);
     background: var(--bg-card);
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
 .action-icon {
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
+    color: var(--primary);
 }
 
 /* Activity List */
@@ -116,13 +123,14 @@
     display: flex;
     gap: 1rem;
     padding: 1rem;
-    background: var(--bg-dark);
+    background: var(--bg-light);
     border-radius: 8px;
+    border: 1px solid #e9ecef;
 }
 
 .activity-icon {
     font-size: 1.25rem;
-    color: var(--accent);
+    color: var(--primary);
 }
 
 .activity-details {
@@ -131,6 +139,7 @@
 
 .activity-text {
     margin: 0 0 0.25rem 0;
+    color: var(--text);
 }
 
 .activity-meta {
@@ -149,8 +158,9 @@
     display: flex;
     flex-direction: column;
     padding: 1rem;
-    background: var(--bg-dark);
+    background: var(--bg-light);
     border-radius: 8px;
+    border: 1px solid #e9ecef;
 }
 
 .info-label {
@@ -161,6 +171,7 @@
 .info-value {
     font-size: 1.125rem;
     margin-top: 0.25rem;
+    color: var(--text);
 }
 
 /* Quick Stats Section */
@@ -172,17 +183,19 @@
 }
 
 .stat-box {
-    background: var(--bg-card);
+    background: var(--bg-light);
     padding: 1.5rem;
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 255, 136, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s;
     position: relative;
     overflow: hidden;
+    border: 1px solid #e9ecef;
 }
 
 .stat-box:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
 }
 
 .stat-box::before {

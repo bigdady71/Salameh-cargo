@@ -13,14 +13,24 @@ Salameh Cargo uses WhatsApp for sending one-time verification codes to users dur
 
 ### Environment Configuration
 
-Copy the following variables from `.env.example` to your `.env` file and update them with your Twilio credentials:
+The application uses phpdotenv to manage environment variables. Follow these steps to set up your environment:
 
-```bash
-TWILIO_ACCOUNT_SID=your_account_sid
-TWILIO_AUTH_TOKEN=your_auth_token
-TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
-TWILIO_WHATSAPP_TEMPLATE_SID=your_template_sid
-```
+1. Copy `.env.example` to a new file named `.env` in the project root:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Update the following variables in your `.env` file with your Twilio credentials:
+
+   ```bash
+   TWILIO_ACCOUNT_SID=your_account_sid
+   TWILIO_AUTH_TOKEN=your_auth_token
+   TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
+   TWILIO_WHATSAPP_TEMPLATE_SID=your_template_sid # Optional - only if using approved templates
+   ```
+
+Note: The environment variables are automatically loaded by `includes/bootstrap.php` when the application starts. The TWILIO_WHATSAPP_TEMPLATE_SID is optional and only required if you're using pre-approved message templates in production.
 
 ### WhatsApp Business API Setup
 
