@@ -5,48 +5,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Salameh Cargo - Shipment Tracking</title>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <?php require_once __DIR__ . '/bootstrap.php'; ?>
+
+    <link rel="preconnect" href="<?= APP_BASE ?>" />
+
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Base Styles -->
+    <link rel="stylesheet" href="<?= asset('css/styles.css') ?>?v=20250816">
+    <link rel="stylesheet" href="<?= asset('css/utilities.css') ?>?v=20250816">
+
+    <!-- Components -->
+    <link rel="stylesheet" href="<?= asset('css/components/navigation.css') ?>?v=20250816">
+
     <?php if (strpos($_SERVER['PHP_SELF'], '/admin/') !== false): ?>
-        <link rel="stylesheet" href="../assets/css/admin-dashboard.css">
+        <!-- Admin Styles -->
+        <link rel="stylesheet" href="<?= asset('css/admin-dashboard.css') ?>?v=20250816">
+        <?php if (isset($_SESSION['component_styles'])): ?>
+            <!-- Component Styles -->
+            <?php foreach ($_SESSION['component_styles'] as $component): ?>
+                <link rel="stylesheet" href="<?= asset('css/components/' . $component . '.css') ?>?v=20250816">
+            <?php endforeach; ?>
+        <?php endif; ?>
     <?php endif; ?>
 </head>
 
 <body>
-    <header class="sticky-top">
-        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <header class="main-header">
+        <nav class="nav">
             <div class="container">
-                <a class="navbar-brand fw-bold" href="/public/index.php">
-                    <span class="text-primary">Salameh</span> Cargo
+                <a href="<?= urlp('public/index.php') ?>" class="nav-brand">
+                    <span class="text-accent">Salameh</span> Cargo
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span class="nav-toggle-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
+
+                <div class="nav-menu">
+                    <ul class="nav-list">
                         <li class="nav-item">
-                            <a class="nav-link <?php echo ($_SERVER['PHP_SELF'] == '/public/index.php') ? 'active' : ''; ?>" href="/public/index.php">Home</a>
+                            <a href="<?= urlp('public/index.php') ?>" class="nav-link <?php echo ($_SERVER['PHP_SELF'] == '/public/index.php') ? 'active' : ''; ?>">
+                                Home
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo ($_SERVER['PHP_SELF'] == '/public/track.php') ? 'active' : ''; ?>" href="/public/track.php">Track</a>
+                            <a href="<?= urlp('public/track.php') ?>" class="nav-link <?php echo ($_SERVER['PHP_SELF'] == '/public/track.php') ? 'active' : ''; ?>">
+                                Track
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo ($_SERVER['PHP_SELF'] == '/public/about.php') ? 'active' : ''; ?>" href="/public/about.php">About</a>
+                            <a href="/public/about.php" class="nav-link <?php echo ($_SERVER['PHP_SELF'] == '/public/about.php') ? 'active' : ''; ?>">
+                                About
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo ($_SERVER['PHP_SELF'] == '/public/contact.php') ? 'active' : ''; ?>" href="/public/contact.php">Contact</a>
+                            <a href="/public/contact.php" class="nav-link <?php echo ($_SERVER['PHP_SELF'] == '/public/contact.php') ? 'active' : ''; ?>">
+                                Contact
+                            </a>
                         </li>
                         <?php if (isset($_SESSION['user_id'])): ?>
                             <li class="nav-item">
-                                <a class="nav-link <?php echo ($_SERVER['PHP_SELF'] == '/public/dashboard.php') ? 'active' : ''; ?>" href="/public/dashboard.php">Dashboard</a>
+                                <a href="/public/dashboard.php" class="nav-link <?php echo ($_SERVER['PHP_SELF'] == '/public/dashboard.php') ? 'active' : ''; ?>">
+                                    Dashboard
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/public/logout.php">Logout</a>

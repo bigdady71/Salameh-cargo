@@ -5,28 +5,23 @@ include __DIR__ . '/../includes/header.php';
 ?>
 
 <!-- Hero Section with 3D Animation -->
-<section class="hero position-relative overflow-hidden py-5 mb-5">
-    <div class="hero-bg position-absolute top-0 start-0 w-100 h-100 parallax-bg"></div>
-    <div class="container py-5">
-        <div class="row min-vh-50 align-items-center">
-            <div class="col-lg-6 py-5 text-center text-lg-start">
-                <h1 class="display-4 fw-bold mb-4 text-primary animate__animated animate__fadeInUp">Fast, Reliable Cargo
-                    Shipping</h1>
-                <p class="lead mb-4 animate__animated animate__fadeInUp animate__delay-1s">From China to Worldwide –
-                    track your shipment effortlessly.</p>
-                <div class="animate__animated animate__fadeInUp animate__delay-2s">
-                    <a href="track.php" class="btn btn-primary btn-lg px-4 py-3 shadow-sm">
-                        <i class="fas fa-search me-2"></i>
+<section class="hero position-relative overflow-hidden">
+    <div class="hero-bg"></div>
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Fast, Reliable Cargo Shipping</h1>
+                <p class="hero-subtitle">From China to Worldwide – track your shipment effortlessly.</p>
+                <div class="hero-cta">
+                    <a href="<?= urlp('public/track.php') ?>" class="btn btn--primary">
+                        <i class="fas fa-search"></i>
                         Track Your Item
                     </a>
                 </div>
             </div>
-            <div class="col-lg-6 d-none d-lg-block">
-                <div class="position-relative scene" id="hero-3d-scene">
-                    <div class="layer" data-depth="0.2">
-                        <img src="../assets/images/container-ship-6631117_1280.jpg" alt="Cargo Ship"
-                            class="img-fluid rounded-3 shadow-lg transform-perspective">
-                    </div>
+            <div class="hero-image">
+                <div class="tilt">
+                    <img src="<?= asset('images/container-ship-6631117_1280.jpg') ?>" alt="Cargo Ship">
                 </div>
             </div>
         </div>
@@ -34,21 +29,19 @@ include __DIR__ . '/../includes/header.php';
 </section>
 
 <!-- Services Cards Section -->
-<section class="py-5 bg-light">
-    <div class="container py-4">
-        <div class="text-center mb-5">
-            <h2 class="display-5 fw-bold mb-3">Our Services</h2>
-            <p class="lead text-muted">Comprehensive shipping solutions for your business</p>
+<section class="services">
+    <div class="container">
+        <div class="section-header">
+            <h2>Our Services</h2>
+            <p>Comprehensive shipping solutions for your business</p>
         </div>
 
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-3">
-                <div class="card h-100 border-0 shadow-sm hover-card">
-                    <img src="/assets/images/service-1.jpg" alt="World Wide Shipping" class="card-img-top">
-                    <div class="card-body">
-                        <h3 class="h5 card-title">World Wide Shipping</h3>
-                        <p class="card-text text-muted">Over 10,000 shipments in 45 countries.</p>
-                    </div>
+        <div class="services-grid">
+            <div class="service-card tilt">
+                <img src="/assets/images/service-1.jpg" alt="World Wide Shipping">
+                <div class="card-content">
+                    <h3>World Wide Shipping</h3>
+                    <p>Over 10,000 shipments in 45 countries.</p>
                 </div>
             </div>
 

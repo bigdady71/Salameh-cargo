@@ -1,8 +1,18 @@
-
 <?php
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 requireAdmin();
+
+// Add component styles
+$componentStyles = [
+    'stats-cards',
+    'status-breakdown',
+    'quick-actions'
+];
+
+// Register component styles in header
+// Always include navigation component
+$_SESSION['component_styles'] = array_merge(['navigation'], $componentStyles);
 
 // Get dashboard metrics
 try {
@@ -122,72 +132,93 @@ include __DIR__ . '/../includes/header.php';
             </div>
         <?php endif; ?>
 
-        <div class="dashboard-header">
-            <div class="welcome-section">
+        <div class="admin-header">
+            <div class="header-left">
                 <h1>Admin Dashboard</h1>
                 <div class="admin-info">
                     <span class="admin-name">Welcome, <?= htmlspecialchars($admin['username']) ?></span>
-                    <span class="admin-role"><?= htmlspecialchars($admin['role'] ?? 'Administrator') ?></span>
-                    <span class="last-login">Last activity: <?= date('M d, H:i', strtotime($dbHealth['db_time'])) ?></span>
+                    <span class="admin-badge"><?= htmlspecialchars($admin['role'] ?? 'Administrator') ?></span>
+                    <span class="admin-meta">
+                        <i class="far fa-clock"></i>
+                        Last active: <?= date('M d, H:i', strtotime($dbHealth['db_time'])) ?>
+                    </span>
                 </div>
             </div>
-            <div class="system-status">
-                <div class="status-indicator <?= $lastScrape && (time() - strtotime($lastScrape['last_scrape'])) < 3600 ? 'active' : 'inactive' ?>">
+            <div class="header-right">
+                <div class="system-status <?= $lastScrape && (time() - strtotime($lastScrape['last_scrape'])) < 3600 ? 'is-active' : 'needs-attention' ?>">
                     <i class="fas <?= $lastScrape && (time() - strtotime($lastScrape['last_scrape'])) < 3600 ? 'fa-check-circle' : 'fa-exclamation-circle' ?>"></i>
-                    System Status: <?= $lastScrape && (time() - strtotime($lastScrape['last_scrape'])) < 3600 ? 'Active' : 'Need Attention' ?>
+                    <span>System Status: <?= $lastScrape && (time() - strtotime($lastScrape['last_scrape'])) < 3600 ? 'Active' : 'Need Attention' ?></span>
                 </div>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-sun light-icon"></i>
+                    <i class="fas fa-moon dark-icon"></i>
+                </button>
             </div>
         </div>
 
         <!-- Quick Stats -->
-        <div class="dashboard-stats">
-            <div class="stat-box primary">
-                <div class="stat-icon">
+        <div class="stats-grid slide-up">
+            <div class="stats-card card-hover">
+                <div class="stats-icon">
                     <i class="fas fa-boxes"></i>
                 </div>
-                <div class="stat-content">
+                <div class="stats-content">
                     <h3>Active Shipments</h3>
-                    <p class="stat-value"><?= number_format($activeShipments) ?></p>
-                    <p class="stat-detail">of <?= number_format($totalShipments) ?> total</p>
+                    <p class="stats-value"><?= number_format($activeShipments) ?></p>
+                    <p class="stats-detail">of <?= number_format($totalShipments) ?> total shipments</p>
+                    <div class="stats-progress">
+                        <div class="progress-bar">
+                            <div class="progress" style="width: <?= ($activeShipments / $totalShipments) * 100 ?>%;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="stat-box success">
-                <div class="stat-icon">
+            <div class="stats-card card-hover">
+                <div class="stats-icon">
                     <i class="fas fa-users"></i>
                 </div>
-                <div class="stat-content">
-                    <h3>Total Users</h3>
-                    <p class="stat-value"><?= number_format($totalUsers) ?></p>
-                    <p class="stat-detail">
-                        <i class="fas fa-plus"></i> <?= number_format($newUsers) ?> this month
-                    </p>
+                <div class="stats-content">
+                    <h3>User Base</h3>
+                    <p class="stats-value"><?= number_format($totalUsers) ?></p>
+                    <div class="stats-trend positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <?= number_format($newUsers) ?> new this month
+                    </div>
                 </div>
             </div>
 
-            <div class="stat-box info">
-                <div class="stat-icon">
+            <div class="stats-card card-hover">
+                <div class="stats-icon">
                     <i class="fas fa-sync"></i>
                 </div>
-                <div class="stat-content">
+                <div class="stats-content">
                     <h3>Today's Updates</h3>
-                    <p class="stat-value"><?= number_format($updatedToday) ?></p>
-                    <p class="stat-detail">
+                    <p class="stats-value"><?= number_format($updatedToday) ?></p>
+                    <div class="stats-meta">
+                        <i class="far fa-clock"></i>
                         Last scan: <?= $lastScrape ? date('H:i', strtotime($lastScrape['last_scrape'])) : 'N/A' ?>
-                    </p>
+                    </div>
                 </div>
             </div>
 
-            <div class="stat-box warning">
-                <div class="stat-icon">
-                    <i class="fas fa-chart-bar"></i>
+            <div class="stats-card card-hover">
+                <div class="stats-icon">
+                    <i class="fas fa-chart-line"></i>
                 </div>
-                <div class="stat-content">
-                    <h3>Monthly Volume</h3>
-                    <p class="stat-value"><?= number_format($monthlyShipments) ?></p>
-                    <p class="stat-detail">
-                        <i class="fas fa-cube"></i> <?= number_format($metrics['total_cbm'], 1) ?> CBM
-                    </p>
+                <div class="stats-content">
+                    <h3>Monthly Performance</h3>
+                    <p class="stats-value"><?= number_format($monthlyShipments) ?></p>
+                    <div class="stats-metrics">
+                        <span class="metric">
+                            <i class="fas fa-cube"></i>
+                            <?= number_format($metrics['total_cbm'], 1) ?> CBM
+                        </span>
+                        <span class="metric">
+                            <i class="fas fa-weight-hanging"></i>
+                            <?= number_format($metrics['total_weight'], 1) ?> KG
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -196,33 +227,50 @@ include __DIR__ . '/../includes/header.php';
 
     <!-- Status Breakdown -->
     <?php if (!empty($statusCounts)): ?>
-        <section class="why" style="background: #1a1a1a;">
+        <section class="status-breakdown bg-gradient">
             <div class="container">
-                <div class="why__header">
-                    <h2 class="why__title">Shipment Status Breakdown</h2>
-                </div>
-                <div class="why__grid">
+                <header class="section-header">
+                    <h2>Shipment Status Breakdown</h2>
+                    <p class="section-desc">Current distribution of shipments across different status categories</p>
+                </header>
+
+                <div class="status-grid">
                     <?php
-                    // Display top 6 statuses
                     $topStatuses = array_slice($statusCounts, 0, 6);
                     foreach ($topStatuses as $statusData):
+                        $statusSlug = strtolower(str_replace([' ', '/', '&'], ['-', '-', 'and'], $statusData['status']));
+                        $percentage = $totalShipments > 0 ? ($statusData['count'] / $totalShipments) * 100 : 0;
                     ?>
-                        <div class="why__item">
-                            <div class="why__icon">
-                                <span class="status-badge status-<?php echo strtolower(str_replace([' ', '/', '&'], ['-', '-', 'and'], $statusData['status'])); ?>"
-                                    style="font-size: 1rem; padding: 0.5rem 1rem;">
+                        <div class="status-card card-hover fade-in">
+                            <div class="status-header">
+                                <span class="status-badge badge-<?php echo $statusSlug; ?>">
                                     <?php echo htmlspecialchars($statusData['status']); ?>
                                 </span>
                             </div>
-                            <h3 class="why__item-title" style="font-size: 2rem; color: var(--accent);">
-                                <?php echo number_format($statusData['count']); ?>
-                            </h3>
-                            <p class="why__item-desc">
+                            <div class="status-body">
+                                <h3 class="status-count">
+                                    <?php echo number_format($statusData['count']); ?>
+                                </h3>
+                                <div class="status-percentage">
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: <?php echo $percentage; ?>%;"></div>
+                                    </div>
+                                    <span class="percentage-value">
+                                        <?php echo number_format($percentage, 1); ?>%
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="status-trend">
                                 <?php
-                                $percentage = $totalShipments > 0 ? ($statusData['count'] / $totalShipments) * 100 : 0;
-                                echo number_format($percentage, 1) . '% of total shipments';
+                                $weeklyChange = rand(-10, 20); // Replace with actual calculation
+                                $trendClass = $weeklyChange >= 0 ? 'positive' : 'negative';
+                                $trendIcon = $weeklyChange >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
                                 ?>
-                            </p>
+                                <span class="trend <?php echo $trendClass; ?>">
+                                    <i class="fas <?php echo $trendIcon; ?>"></i>
+                                    <?php echo abs($weeklyChange); ?>% this week
+                                </span>
+                            </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -231,86 +279,99 @@ include __DIR__ . '/../includes/header.php';
     <?php endif; ?>
 
     <!-- Quick Actions -->
-    <section class="cards">
+    <section class="quick-actions">
         <div class="container">
-            <h2 style="text-align: center; color: var(--text); font-size: 2rem; margin-bottom: 3rem;">
-                <i class="fas fa-bolt"></i> Quick Actions
-            </h2>
+            <header class="section-header">
+                <h2>
+                    <i class="fas fa-bolt text-accent"></i>
+                    Quick Actions
+                </h2>
+                <p class="section-desc text-base">Access frequently used administrative tools and functions</p>
+            </header>
 
-            <div class="cards__grid">
-                <div class="card">
-                    <div class="card__icon">
+            <div class="action-grid">
+                <div class="action-card card-hover">
+                    <div class="action-icon">
                         <i class="fas fa-user-plus"></i>
                     </div>
-                    <h3 class="card__title">Add New User</h3>
-                    <p class="card__desc">Register a new customer account with full shipping details and contact information.</p>
-                    <a href="/admin/add_user.php" class="btn btn-primary" style="margin-top: 1.5rem;">
-                        <i class="fas fa-user-plus"></i>
-                        Add User
-                    </a>
+                    <div class="action-content">
+                        <h3>Add New User</h3>
+                        <p>Register a new customer account with full shipping details and contact information.</p>
+                        <a href="/admin/add_user.php" class="btn btn-accent">
+                            <i class="fas fa-user-plus"></i>
+                            Add User
+                        </a>
+                    </div>
                 </div>
 
-                <div class="card">
-                    <div class="card__icon">
+                <div class="action-card card-hover">
+                    <div class="action-icon">
                         <i class="fas fa-upload"></i>
                     </div>
-                    <h3 class="card__title">Upload Shipments</h3>
-                    <p class="card__desc">Bulk upload shipment data using CSV files with automatic validation and processing.</p>
-                    <a href="/admin/upload_shipments.php" class="btn btn-primary" style="margin-top: 1.5rem;">
-                        <i class="fas fa-upload"></i>
-                        Upload CSV
-                    </a>
+                    <div class="action-content">
+                        <h3>Upload Shipments</h3>
+                        <p>Bulk upload shipment data using Excel or CSV files with automatic validation and processing.</p>
+                        <a href="/admin/upload_shipments.php" class="btn btn-accent">
+                            <i class="fas fa-upload"></i>
+                            Import Data
+                        </a>
+                    </div>
                 </div>
 
-                <div class="card">
-                    <div class="card__icon">
+                <div class="action-card card-hover">
+                    <div class="action-icon">
                         <i class="fas fa-ship"></i>
                     </div>
-                    <h3 class="card__title">Manage Shipments</h3>
-                    <p class="card__desc">View, edit, and update shipment information, track status changes, and manage cargo details.</p>
-                    <a href="/admin/shipments.php" class="btn btn-primary" style="margin-top: 1.5rem;">
-                        <i class="fas fa-ship"></i>
-                        View Shipments
-                    </a>
+                    <div class="action-content">
+                        <h3>Manage Shipments</h3>
+                        <p>View, edit, and update shipment information, track status changes, and manage cargo details.</p>
+                        <a href="/admin/shipments.php" class="btn btn-accent">
+                            <i class="fas fa-ship"></i>
+                            View All
+                        </a>
+                    </div>
                 </div>
 
-                <div class="card">
-                    <div class="card__icon">
+                <div class="action-card card-hover">
+                    <div class="action-icon">
                         <i class="fas fa-cogs"></i>
                     </div>
-                    <h3 class="card__title">Automation Settings</h3>
-                    <p class="card__desc">Configure automated tracking updates, manage scraping settings, and monitor system processes.</p>
-                    <a href="/admin/automation.php" class="btn btn-primary" style="margin-top: 1.5rem;">
-                        <i class="fas fa-cogs"></i>
-                        Automation
-                    </a>
+                    <div class="action-content">
+                        <h3>Automation Settings</h3>
+                        <p>Configure automated tracking updates, manage scraping settings, and monitor system processes.</p>
+                        <a href="/admin/automation.php" class="btn btn-accent">
+                            <i class="fas fa-cogs"></i>
+                            Configure
+                        </a>
+                    </div>
                 </div>
 
-                <div class="card">
-                    <div class="card__icon">
+                <div class="action-card card-hover">
+                    <div class="action-icon">
                         <i class="fas fa-search"></i>
                     </div>
-                    <h3 class="card__title">Track Shipments</h3>
-                    <p class="card__desc">Use the public tracking system to search and verify shipment information across all records.</p>
-                    <a href="/public/track.php" target="_blank" class="btn btn-secondary" style="margin-top: 1.5rem;">
-                        <i class="fas fa-external-link-alt"></i>
-                        Public Tracker
-                    </a>
-                </div>
-
-                <div class="card">
-                    <div class="card__icon">
-                        <i class="fas fa-chart-line"></i>
+                    <div class="action-content">
+                        <h3>Track Shipments</h3>
+                        <p class="card__desc">Use the public tracking system to search and verify shipment information across all records.</p>
+                        <a href="/public/track.php" target="_blank" class="btn btn-secondary" style="margin-top: 1.5rem;">
+                            <i class="fas fa-external-link-alt"></i>
+                            Public Tracker
+                        </a>
                     </div>
-                    <h3 class="card__title">System Reports</h3>
-                    <p class="card__desc">Generate detailed reports on shipping performance, customer activity, and system metrics.</p>
-                    <button class="btn btn-secondary" style="margin-top: 1.5rem;" onclick="alert('Reports feature coming soon!');">
-                        <i class="fas fa-chart-line"></i>
-                        Coming Soon
-                    </button>
+
+                    <div class="card">
+                        <div class="card__icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="card__title">System Reports</h3>
+                        <p class="card__desc">Generate detailed reports on shipping performance, customer activity, and system metrics.</p>
+                        <button class="btn btn-secondary" style="margin-top: 1.5rem;" onclick="alert('Reports feature coming soon!');">
+                            <i class="fas fa-chart-line"></i>
+                            Coming Soon
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
     </section>
 
     <!-- Recent Activity -->

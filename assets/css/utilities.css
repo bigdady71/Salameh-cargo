@@ -1,19 +1,20 @@
 /* Card Variations */
 .card {
-    background: var(--white);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(10, 37, 64, 0.05);
-    transition: all 0.3s ease;
-}
-
-.card-dark {
-    background: var(--primary);
-    color: var(--white);
+    background: var(--bg-card);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    transition: var(--transition-base);
 }
 
 .card-hover:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 24px rgba(10, 37, 64, 0.1);
+    transform: translateY(-2px) rotate3d(1, 1, 0, 2deg);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-dark {
+    background: var(--secondary);
+    color: var(--text-light);
 }
 
 /* Grid System */
@@ -47,32 +48,40 @@
 }
 
 /* Utility Classes */
-.bg-primary {
-    background-color: var(--primary) !important;
+.bg-base {
+    background-color: var(--base) !important;
 }
 
-.bg-white {
-    background-color: var(--white) !important;
+.bg-secondary {
+    background-color: var(--secondary) !important;
 }
 
-.bg-card {
-    background-color: var(--card) !important;
+.bg-accent {
+    background-color: var(--accent) !important;
 }
 
-.text-primary {
-    color: var(--primary) !important;
+.bg-gradient {
+    background: linear-gradient(135deg, var(--secondary) 0%, var(--base) 100%) !important;
+}
+
+.text-base {
+    color: var(--text) !important;
+}
+
+.text-secondary {
+    color: var(--secondary) !important;
 }
 
 .text-accent {
     color: var(--accent) !important;
 }
 
-.text-muted {
-    color: var(--muted) !important;
+.text-light {
+    color: var(--text-light) !important;
 }
 
-.text-white {
-    color: var(--white) !important;
+.text-muted {
+    color: var(--text-muted) !important;
 }
 
 .p-0 {
@@ -167,28 +176,29 @@
 /* Status Badges */
 .badge {
     display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 999px;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--border-radius-pill);
     font-size: 0.875rem;
-    font-weight: 500;
+    font-weight: 600;
+    line-height: 1;
 }
 
 .badge-success {
-    background: rgba(40, 167, 69, 0.1);
-    color: #28a745;
+    background-color: var(--success);
+    color: var(--text-light);
 }
 
-.badge-warning {
-    background: rgba(255, 193, 7, 0.1);
-    color: #ffc107;
+.badge-error {
+    background-color: var(--error);
+    color: var(--text-light);
 }
 
-.badge-danger {
-    background: rgba(220, 53, 69, 0.1);
-    color: #dc3545;
+.badge-accent {
+    background-color: var(--accent);
+    color: var(--text-dark);
 }
 
-.badge-info {
-    background: rgba(23, 162, 184, 0.1);
-    color: #17a2b8;
+.badge-secondary {
+    background-color: var(--secondary);
+    color: var(--text-light);
 }
