@@ -37,40 +37,62 @@ include __DIR__ . '/../includes/header.php';
         </div>
 
         <div class="services-grid">
-            <div class="service-card tilt">
-                <img src="/assets/images/service-1.jpg" alt="World Wide Shipping">
-                <div class="card-content">
-                    <h3>World Wide Shipping</h3>
-                    <p>Over 10,000 shipments in 45 countries.</p>
-                </div>
-            </div>
+
 
             <div class="col-md-6 col-lg-3">
                 <div class="card h-100 border-0 shadow-sm hover-card">
-                    <img src="/assets/images/service-2.jpg" alt="Door to Door Delivery" class="card-img-top">
+                    <img src="../assets/images/word wide shipping 1.jpg" alt="Door to Door Delivery" class="card-img-top" style="height: 250px; object-fit: cover; width: 100%;">
+                    <div class="card-body">
+                        <h3 class="h5 card-title">World Wide Shipping</h3>
+                        <p class="card-text text-muted">Over 10,000 shipments in 45 countries.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm hover-card">
+                    <img src="../assets/images/door-to-door-delivery-service.jpeg" alt="Door to Door Delivery" class="card-img-top" style="height: 250px; object-fit: cover; width: 100%;">
                     <div class="card-body">
                         <h3 class="h5 card-title">Door to Door Delivery</h3>
-                        <p class="card-text text-muted">From your factory to your doorstep.</p>
+                        <p class="card-text text-muted">From your factory to your doorstep</p>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-6 col-lg-3">
                 <div class="card h-100 border-0 shadow-sm hover-card">
-                    <img src="/assets/images/service-3.jpg" alt="Sea & Air Freight" class="card-img-top">
+                    <img src="../assets/images/010322-Air-vs-Ocean-Freight.webp" alt="Sea & Air Freight" class="card-img-top" style="height: 250px; object-fit: cover; width: 100%;">
                     <div class="card-body">
                         <h3 class="h5 card-title">Sea & Air Freight</h3>
-                        <p class="card-text text-muted">Reliable sea and air cargo solutions.</p>
+                        <p class="card-text text-muted">Reliable sea and air cargo solutions</p>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-6 col-lg-3">
                 <div class="card h-100 border-0 shadow-sm hover-card">
-                    <img src="/assets/images/service-4.jpg" alt="Warehousing" class="card-img-top">
+                    <img src="../assets/images/010322-Air-vs-Ocean-Freight.webp" alt="Sea & Air Freight" class="card-img-top" style="height: 250px; object-fit: cover; width: 100%;">
+                    <div class="card-body">
+                        <h3 class="h5 card-title">Sea & Air Freight</h3>
+                        <p class="card-text text-muted">Reliable sea and air cargo solutions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm hover-card">
+                    <img src="../assets/images/010322-Air-vs-Ocean-Freight.webp" alt="Sea & Air Freight" class="card-img-top" style="height: 250px; object-fit: cover; width: 100%;">
+                    <div class="card-body">
+                        <h3 class="h5 card-title">Sea & Air Freight</h3>
+                        <p class="card-text text-muted">Reliable sea and air cargo solutions</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm hover-card">
+                    <img src="../assets/images/download.jpeg" alt="Warehousing" class="card-img-top" style="height: 250px; object-fit: cover; width: 100%;">
                     <div class="card-body">
                         <h3 class="h5 card-title">Warehousing</h3>
-                        <p class="card-text text-muted">Safe storage solutions in multiple locations.</p>
+                        <p class="card-text text-muted">Safe storage solutions</p>
                     </div>
                 </div>
             </div>
@@ -128,7 +150,7 @@ include __DIR__ . '/../includes/header.php';
             <div class="col-lg-6 mb-4 mb-lg-0">
                 <div class="position-relative scene" id="track-3d-scene">
                     <div class="layer" data-depth="0.1">
-                        <img src="../assets/images/quick-track.svg" alt="Quick Tracking Service"
+                        <img src="../assets/images/GPS-Tracking-Definition5.jpg" style="width: 90%; margin:2rem; border-radius:10px;" alt="Quick Tracking Service"
                             class="img-fluid transform-rotate">
                     </div>
                 </div>

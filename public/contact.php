@@ -133,17 +133,17 @@ include __DIR__ . '/../includes/header.php';
                         </a>
                     </div>
                     <div class="split__media">
-                        <img src="/assets/images/services-2.svg" alt="Customer Support" class="split__image">
+                        <img src="/assets/images/smart-warehousing.webp" alt="Customer Support" class="split__image">
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Contact Form Section -->
-        <section class="cards" style="background: #1a1a1a;">
+        <section class="cards" style="background: #0D2D52;">
             <div class="container">
-                <h2 style="text-align: center; color: var(--text); font-size: 2.5rem; margin-bottom: 3rem;">Send Us a Message</h2>
-                
+                <h2 style="text-align: center; color: white; font-size: 2.5rem; margin-bottom: 3rem;">Send Us a Message</h2>
+
                 <div style="max-width: 800px; margin: 0 auto;">
                     <div class="card" style="padding: 3rem;">
                         <form method="post" action="#" class="contact-form">

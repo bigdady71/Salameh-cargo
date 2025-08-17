@@ -57,7 +57,7 @@ include __DIR__ . '/../includes/header.php';
         <!-- Services Section -->
         <section class="cards">
             <div class="container">
-                <h2 style="text-align: center; color: var(--text); font-size: 2.5rem; margin-bottom: 3rem;">Our Services</h2>
+                <h2 style="text-align: center; color: black; font-size: 2.5rem; margin-bottom: 3rem;">Our Services</h2>
                 <div class="cards__grid">
                     <div class="card">
                         <div class="card__icon">
@@ -128,7 +128,7 @@ include __DIR__ . '/../includes/header.php';
                         </a>
                     </div>
                     <div class="split__media">
-                        <img src="/assets/images/services-1.svg" alt="Global Shipping Network" class="split__image">
+                        <img src="/assets/images/passport-2714675_1280.jpg" alt="Global Shipping Network" class="split__image">
                     </div>
                 </div>
             </div>

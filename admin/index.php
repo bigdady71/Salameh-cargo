@@ -10,9 +10,10 @@ $componentStyles = [
     'quick-actions'
 ];
 
-// Register component styles in header
-// Always include navigation component
-$_SESSION['component_styles'] = array_merge(['navigation'], $componentStyles);
+// Register component styles
+$_SESSION['component_styles'] = $componentStyles;
+
+include __DIR__ . '/../includes/admin-header.php';
 
 // Get dashboard metrics
 try {
@@ -497,4 +498,4 @@ include __DIR__ . '/../includes/header.php';
     });
 </script>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/admin-footer.php'; ?>
