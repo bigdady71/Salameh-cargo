@@ -46,14 +46,14 @@ if (!isset($_SESSION['user_id'])) {
                 <ul class="nav-items">
                     <li class="nav-item">
                         <a href="<?= urlp('admin/index.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'index.php' ? 'active' : '' ?>">
-                            <i class="fas fa-home nav-icon"></i>
+                            <i class="fas fa-tachometer-alt nav-icon"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="<?= urlp('admin/shipments.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'shipments.php' ? 'active' : '' ?>">
-                            <i class="fas fa-ship nav-icon"></i>
-                            <span>Shipments</span>
+                            <i class="fas fa-shipping-fast nav-icon"></i>
+                            <span>Manage Shipments</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -68,18 +68,60 @@ if (!isset($_SESSION['user_id'])) {
                             <span>Add User</span>
                         </a>
                     </li>
-                    <a href="<?= urlp('admin/index.php') ?>" class="nav-item<?= ($_SERVER['PHP_SELF'] == '/admin/index.php' ? ' active' : '') ?>">
-                        <i class="fas fa-home"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    </li>
-                    <li>
-                        <a href="<?= urlp('admin/shipments.php') ?>" class="nav-item<?= ($_SERVER['PHP_SELF'] == '/admin/shipments.php' ? ' active' : '') ?>">
-                            <i class="fas fa-shipping-fast"></i>
-                            <span>Shipments</span>
+                    <li class="nav-item">
+                        <a href="<?= urlp('admin/automation.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'automation.php' ? 'active' : '' ?>">
+                            <i class="fas fa-robot nav-icon"></i>
+                            <span>Automation</span>
                         </a>
                     </li>
                 </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="<?= urlp('admin/logout.php') ?>" class="nav-link">
+                    <i class="fas fa-sign-out-alt nav-icon"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="admin-content">
+            <div class="admin-header">
+                <h1><?= $pageTitle ?? 'Dashboard' ?></h1>
+            </div>
+            </a>
+            </li>
+            <li class="nav-item">
+                <a href="<?= urlp('admin/shipments.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'shipments.php' ? 'active' : '' ?>">
+                    <i class="fas fa-ship nav-icon"></i>
+                    <span>Shipments</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="<?= urlp('admin/upload_shipments.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'upload_shipments.php' ? 'active' : '' ?>">
+                    <i class="fas fa-upload nav-icon"></i>
+                    <span>Upload Shipments</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="<?= urlp('admin/add_user.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'add_user.php' ? 'active' : '' ?>">
+                    <i class="fas fa-user-plus nav-icon"></i>
+                    <span>Add User</span>
+                </a>
+            </li>
+            <a href="<?= urlp('admin/index.php') ?>" class="nav-item<?= ($_SERVER['PHP_SELF'] == '/admin/index.php' ? ' active' : '') ?>">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            </li>
+            <li>
+                <a href="<?= urlp('admin/shipments.php') ?>" class="nav-item<?= ($_SERVER['PHP_SELF'] == '/admin/shipments.php' ? ' active' : '') ?>">
+                    <i class="fas fa-shipping-fast"></i>
+                    <span>Shipments</span>
+                </a>
+            </li>
+            </ul>
     </div>
 
     <div class="nav-section">
