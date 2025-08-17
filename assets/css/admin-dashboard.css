@@ -4,6 +4,10 @@
     --sidebar-width: 280px;
     --header-height: 70px;
 
+    /* Transitions */
+    --transition-speed: 0.3s;
+    --transition-timing: ease;
+
     /* Colors */
     --bg: #f8fafc;
     --panel: #ffffff;
@@ -38,6 +42,239 @@
     color: var(--ink);
     line-height: 1.6;
     margin: 0;
+}
+
+/* Collapse States */
+.is-collapsed .admin-sidebar {
+    width: 72px;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+.is-collapsed .admin-content {
+    margin-left: 72px;
+}
+
+.is-collapsed .nav-link span,
+.is-collapsed .sidebar-brand span {
+    display: none;
+}
+
+.is-collapsed .nav-icon {
+    margin-right: 0;
+    font-size: 1.25rem;
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+    background: transparent;
+    border: 0;
+    color: var(--ink);
+    font-size: 1.25rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color var(--transition-speed) var(--transition-timing);
+}
+
+.sidebar-toggle:hover {
+    background: var(--content-bg);
+}
+
+/* Admin Header */
+.admin-header {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--sidebar-border);
+    height: var(--header-height);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.page-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+/* Admin Content Area */
+.admin-content {
+    margin-left: var(--sidebar-width);
+    padding: 2rem;
+    transition: margin-left var(--transition-speed) var(--transition-timing);
+}
+
+/* Cards & Forms */
+.card {
+    background: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Form Controls */
+.form-control {
+    background: var(--panel);
+    border: 1px solid #e5e7eb;
+    color: var(--ink);
+    padding: 0.625rem 0.75rem;
+    border-radius: 6px;
+    width: 100%;
+    transition: border-color var(--transition-speed) var(--transition-timing),
+        box-shadow var(--transition-speed) var(--transition-timing);
+}
+
+.form-control:focus {
+    outline: 0;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 2px rgba(10, 61, 98, 0.35);
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1rem;
+    border-radius: 6px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-speed) var(--transition-timing);
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: var(--ink);
+}
+
+.btn-primary:hover {
+    filter: brightness(0.95);
+}
+
+.btn-secondary {
+    background: var(--content-bg);
+    color: var(--ink);
+}
+
+.btn-secondary:hover {
+    background: #e5e7eb;
+}
+
+/* Admin Cards */
+.admin-card {
+    background: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Admin Forms */
+.admin-form {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.admin-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.admin-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--ink);
+}
+
+.admin-form input[type="text"],
+.admin-form input[type="email"],
+.admin-form input[type="password"],
+.admin-form input[type="tel"],
+.admin-form input[type="number"],
+.admin-form select,
+.admin-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--sidebar-border);
+    border-radius: 4px;
+    background: var(--panel);
+    color: var(--ink);
+    font-family: var(--font-primary);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.admin-form input:focus,
+.admin-form select:focus,
+.admin-form textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(251, 165, 64, 0.2);
+}
+
+/* Admin Buttons */
+.btn-admin {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-admin-primary {
+    background: var(--brand);
+    color: white;
+}
+
+.btn-admin-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-admin-secondary {
+    background: var(--accent);
+    color: var(--ink);
+}
+
+.btn-admin-secondary:hover {
+    background: #e89430;
+}
+
+/* Admin Tables */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--sidebar-border);
+}
+
+.admin-table th {
+    font-weight: 600;
+    background: var(--content-bg);
+    color: var(--ink);
+}
+
+.admin-table tr:hover {
+    background: var(--content-bg);
 }
 
 .admin-layout {
@@ -78,6 +315,30 @@
     display: flex;
     flex-direction: column;
     z-index: 100;
+    transition: width 0.3s ease;
+}
+
+.admin-sidebar.collapsed {
+    width: 70px;
+    padding: 2rem 0.5rem;
+}
+
+.admin-sidebar.collapsed .nav-link span,
+.admin-sidebar.collapsed .sidebar-brand span {
+    display: none;
+}
+
+.admin-sidebar.collapsed .nav-icon {
+    margin-right: 0;
+    font-size: 1.25rem;
+}
+
+.admin-content {
+    transition: margin-left 0.3s ease;
+}
+
+.admin-sidebar.collapsed+.admin-content {
+    margin-left: 70px;
 }
 
 .sidebar-brand {

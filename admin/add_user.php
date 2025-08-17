@@ -1,7 +1,9 @@
 <?php
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/header.php';
+
+$pageTitle = 'Add New User';
+include __DIR__ . '/../includes/admin-header.php';
 
 // Ensure user is logged in as admin
 requireAdmin();
@@ -176,62 +178,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <div class="form-container">
-        <h2>Add New User</h2>
+    <div class="admin-content">
+        <div class="admin-card admin-form">
+            <?php if ($error): ?>
+                <div class="error-message">
+                    <?php echo htmlspecialchars($error); ?>
+                </div>
+            <?php endif; ?>
 
-        <?php if ($error): ?>
-            <div class="error-message">
-                <?php echo htmlspecialchars($error); ?>
-            </div>
-        <?php endif; ?>
+            <?php if ($success): ?>
+                <div class="success-message">
+                    <?php echo htmlspecialchars($success); ?>
+                </div>
+            <?php endif; ?>
 
-        <?php if ($success): ?>
-            <div class="success-message">
-                <?php echo htmlspecialchars($success); ?>
-            </div>
-        <?php endif; ?>
+            <form method="post" class="admin-form">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
 
-        <form method="post">
-            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+                <div class="form-group">
+                    <label for="full_name" class="required">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" value="<?php echo htmlspecialchars($formData['full_name']); ?>" required>
+                </div>
 
-            <div class="form-group">
-                <label for="full_name" class="required">Full Name</label>
-                <input type="text" id="full_name" name="full_name" value="<?php echo htmlspecialchars($formData['full_name']); ?>" required>
-            </div>
+                <div class="form-group">
+                    <label for="phone" class="required">Phone</label>
+                    <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($formData['phone']); ?>" required>
+                </div>
 
-            <div class="form-group">
-                <label for="phone" class="required">Phone</label>
-                <input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($formData['phone']); ?>" required>
-            </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($formData['email']); ?>">
+                </div>
 
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($formData['email']); ?>">
-            </div>
+                <div class="form-group">
+                    <label for="shipping_code">Shipping Code</label>
+                    <input type="text" id="shipping_code" name="shipping_code" value="<?php echo htmlspecialchars($formData['shipping_code']); ?>">
+                </div>
 
-            <div class="form-group">
-                <label for="shipping_code">Shipping Code</label>
-                <input type="text" id="shipping_code" name="shipping_code" value="<?php echo htmlspecialchars($formData['shipping_code']); ?>">
-            </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" value="<?php echo htmlspecialchars($formData['address']); ?>">
+                </div>
 
-            <div class="form-group">
-                <label for="address">Address</label>
-                <input type="text" id="address" name="address" value="<?php echo htmlspecialchars($formData['address']); ?>">
-            </div>
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <input type="text" id="country" name="country" value="<?php echo htmlspecialchars($formData['country']); ?>">
+                </div>
 
-            <div class="form-group">
-                <label for="country">Country</label>
-                <input type="text" id="country" name="country" value="<?php echo htmlspecialchars($formData['country']); ?>">
-            </div>
+                <div class="form-group">
+                    <label for="id_number">ID Number</label>
+                    <input type="text" id="id_number" name="id_number" value="<?php echo htmlspecialchars($formData['id_number']); ?>">
+                </div>
 
-            <div class="form-group">
-                <label for="id_number">ID Number</label>
-                <input type="text" id="id_number" name="id_number" value="<?php echo htmlspecialchars($formData['id_number']); ?>">
-            </div>
-
-            <button type="submit">Add User</button>
-        </form>
-    </div>
+                <button type="submit">Add User</button>
+            </form>
+        </div>
 </body>
 
 </html>

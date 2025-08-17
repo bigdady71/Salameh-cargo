@@ -74,6 +74,30 @@ if (!isset($_SESSION['user_id'])) {
                             <span>Automation</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="<?= urlp('admin/shipments.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'shipments.php' ? 'active' : '' ?>">
+                            <i class="fas fa-shipping-fast nav-icon"></i>
+                            <span>Manage Shipments</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?= urlp('admin/upload_shipments.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'upload_shipments.php' ? 'active' : '' ?>">
+                            <i class="fas fa-upload nav-icon"></i>
+                            <span>Upload Shipments</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?= urlp('admin/add_user.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'add_user.php' ? 'active' : '' ?>">
+                            <i class="fas fa-user-plus nav-icon"></i>
+                            <span>Add User</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?= urlp('admin/automation.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'automation.php' ? 'active' : '' ?>">
+                            <i class="fas fa-robot nav-icon"></i>
+                            <span>Automation</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
 
@@ -85,43 +109,26 @@ if (!isset($_SESSION['user_id'])) {
             </div>
         </aside>
 
-        <!-- Main Content Area -->
-        <main class="admin-content">
+
+
+ <main class="admin-content">
             <div class="admin-header">
-                <h1><?= $pageTitle ?? 'Dashboard' ?></h1>
+                <div class="header-left">
+                    <button id="sidebar-toggle" class="sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1><?= $pageTitle ?? 'Dashboard' ?></h1>
+                </div>
             </div>
+
+            <script>
+                document.getElementById('sidebar-toggle').addEventListener('click', function() {
+                    document.querySelector('.admin-sidebar').classList.toggle('collapsed');
+                });
+            </script>
             </a>
             </li>
-            <li class="nav-item">
-                <a href="<?= urlp('admin/shipments.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'shipments.php' ? 'active' : '' ?>">
-                    <i class="fas fa-ship nav-icon"></i>
-                    <span>Shipments</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="<?= urlp('admin/upload_shipments.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'upload_shipments.php' ? 'active' : '' ?>">
-                    <i class="fas fa-upload nav-icon"></i>
-                    <span>Upload Shipments</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="<?= urlp('admin/add_user.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'add_user.php' ? 'active' : '' ?>">
-                    <i class="fas fa-user-plus nav-icon"></i>
-                    <span>Add User</span>
-                </a>
-            </li>
-            <a href="<?= urlp('admin/index.php') ?>" class="nav-item<?= ($_SERVER['PHP_SELF'] == '/admin/index.php' ? ' active' : '') ?>">
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-            </a>
-            </li>
-            <li>
-                <a href="<?= urlp('admin/shipments.php') ?>" class="nav-item<?= ($_SERVER['PHP_SELF'] == '/admin/shipments.php' ? ' active' : '') ?>">
-                    <i class="fas fa-shipping-fast"></i>
-                    <span>Shipments</span>
-                </a>
-            </li>
-            </ul>
+            
     </div>
 
     <div class="nav-section">

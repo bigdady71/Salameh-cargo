@@ -1,7 +1,9 @@
 <?php
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/header.php';
+
+$pageTitle = 'Automation Controls';
+include __DIR__ . '/../includes/admin-header.php';
 
 // Ensure user is logged in as admin
 requireAdmin();
@@ -184,9 +186,7 @@ $recentScrapes = $pdo->query('
 </head>
 
 <body>
-    <div class="container">
-        <h1>Automation Controls</h1>
-
+    <div class="admin-content">
         <?php if ($success_message): ?>
             <div class="message success"><?php echo htmlspecialchars($success_message); ?></div>
         <?php endif; ?>

@@ -2,7 +2,9 @@
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 requireAdmin();
-include __DIR__ . '/../includes/header.php';
+
+$pageTitle = 'Manage Shipments';
+include __DIR__ . '/../includes/admin-header.php';
 
 $message = '';
 $error = '';
@@ -83,9 +85,7 @@ try {
 }
 ?>
 
-<div class="container">
-    <h1>Manage Shipments</h1>
-
+<div class="admin-content">
     <?php if ($message): ?>
         <div class="alert success"><?php echo htmlspecialchars($message); ?></div>
     <?php endif; ?>
@@ -94,94 +94,104 @@ try {
         <div class="alert error"><?php echo htmlspecialchars($error); ?></div>
     <?php endif; ?>
 
-    <!-- Filters -->
-    <div class="filters">
-        <form method="get" class="filter-form">
-            <div class="form-group">
-                <label for="search">Search:</label>
-                <input type="text" name="search" id="search" value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>" placeholder="Tracking, Container, Name, Phone">
-            </div>
+    <div class="card">
 
-            <div class="form-group">
-                <label for="status">Status:</label>
-                <select name="status" id="status">
-                    <option value="">All Statuses</option>
-                    <?php foreach ($statuses as $status): ?>
-                        <option value="<?php echo htmlspecialchars($status); ?>" <?php echo ($_GET['status'] ?? '') === $status ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($status); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+        <!-- Filters -->
+        <div class="card">
+            <form method="get" class="filter-form">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="form-group">
+                        <label for="search">Search:</label>
+                        <input type="text" name="search" id="search" class="form-control"
+                            value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>"
+                            placeholder="Tracking, Container, Name, Phone">
+                    </div>
 
-            <button type="submit" class="btn btn-secondary">Filter</button>
-            <a href="shipments.php" class="btn btn-secondary">Clear</a>
-        </form>
-    </div>
+                    <div class="form-group">
+                        <label for="status">Status:</label>
+                        <select name="status" id="status" class="form-control">
+                            <option value="">All Statuses</option>
+                            <?php foreach ($statuses as $status): ?>
+                                <option value="<?php echo htmlspecialchars($status); ?>"
+                                    <?php echo ($_GET['status'] ?? '') === $status ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($status); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
 
-    <!-- Shipments Table -->
-    <div class="table-container">
-        <table class="shipments-table">
-            <thead>
-                <tr>
-                    <th>Tracking Number</th>
-                    <th>Container Number</th>
-                    <th>Customer</th>
-                    <th>Status</th>
-                    <th>Last Updated</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (empty($shipments)): ?>
-                    <tr>
-                        <td colspan="6" class="no-data">No shipments found.</td>
-                    </tr>
-                <?php else: ?>
-                    <?php foreach ($shipments as $shipment): ?>
+                    <div class="form-group" style="display: flex; align-items: flex-end; gap: 0.5rem;">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                        <a href="shipments.php" class="btn btn-secondary">Clear</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Shipments Table -->
+        <div class="card">
+            <div class="table-container">
+                <table class="admin-table w-full">
+                    <thead>
                         <tr>
-                            <td><?php echo htmlspecialchars($shipment['tracking_number']); ?></td>
-                            <td><?php echo htmlspecialchars($shipment['container_number'] ?? '-'); ?></td>
-                            <td>
-                                <?php echo htmlspecialchars($shipment['full_name'] ?? 'Unknown'); ?>
-                                <?php if ($shipment['phone']): ?>
-                                    <br><small><?php echo htmlspecialchars($shipment['phone']); ?></small>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <span class="status-badge status-<?php echo strtolower(str_replace(' ', '-', $shipment['status'])); ?>">
-                                    <?php echo htmlspecialchars($shipment['status']); ?>
-                                </span>
-                            </td>
-                            <td><?php echo date('M j, Y H:i', strtotime($shipment['created_at'])); ?></td>
-                            <td>
-                                <form method="post" class="inline-form">
-                                    <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
-                                    <input type="hidden" name="shipment_id" value="<?php echo $shipment['shipment_id']; ?>">
-                                    <select name="new_status" class="status-select">
-                                        <option value="">Change Status</option>
-                                        <option value="En Route">En Route</option>
-                                        <option value="In Transit">In Transit</option>
-                                        <option value="Arrived at Port">Arrived at Port</option>
-                                        <option value="Customs Clearance">Customs Clearance</option>
-                                        <option value="Out for Delivery">Out for Delivery</option>
-                                        <option value="Delivered">Delivered</option>
-                                        <option value="Pending">Pending</option>
-                                        <option value="Booked">Booked</option>
-                                    </select>
-                                    <button type="submit" name="update_status" class="btn btn-small">Update</button>
-                                </form>
-                            </td>
+                            <th>Tracking Number</th>
+                            <th>Container Number</th>
+                            <th>Customer</th>
+                            <th>Status</th>
+                            <th>Last Updated</th>
+                            <th>Actions</th>
                         </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
+                    </thead>
+                    <tbody>
+                        <?php if (empty($shipments)): ?>
+                            <tr>
+                                <td colspan="6" class="no-data">No shipments found.</td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($shipments as $shipment): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($shipment['tracking_number']); ?></td>
+                                    <td><?php echo htmlspecialchars($shipment['container_number'] ?? '-'); ?></td>
+                                    <td>
+                                        <?php echo htmlspecialchars($shipment['full_name'] ?? 'Unknown'); ?>
+                                        <?php if ($shipment['phone']): ?>
+                                            <br><small><?php echo htmlspecialchars($shipment['phone']); ?></small>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-<?php echo strtolower(str_replace(' ', '-', $shipment['status'])); ?>">
+                                            <?php echo htmlspecialchars($shipment['status']); ?>
+                                        </span>
+                                    </td>
+                                    <td><?php echo date('M j, Y H:i', strtotime($shipment['created_at'])); ?></td>
+                                    <td>
+                                        <form method="post" class="inline-form">
+                                            <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                                            <input type="hidden" name="shipment_id" value="<?php echo $shipment['shipment_id']; ?>">
+                                            <select name="new_status" class="status-select">
+                                                <option value="">Change Status</option>
+                                                <option value="En Route">En Route</option>
+                                                <option value="In Transit">In Transit</option>
+                                                <option value="Arrived at Port">Arrived at Port</option>
+                                                <option value="Customs Clearance">Customs Clearance</option>
+                                                <option value="Out for Delivery">Out for Delivery</option>
+                                                <option value="Delivered">Delivered</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Booked">Booked</option>
+                                            </select>
+                                            <button type="submit" name="update_status" class="btn btn-small">Update</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
 
-    <div class="summary">
-        <p>Total shipments: <?php echo count($shipments); ?></p>
-    </div>
-</div>
+            <div class="summary">
+                <p>Total shipments: <?php echo count($shipments); ?></p>
+            </div>
+        </div>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+        <?php include __DIR__ . '/../includes/admin-footer.php'; ?>
