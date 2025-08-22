@@ -93,6 +93,10 @@
     background: var(--header-bg);
     border-bottom: 1px solid var(--sidebar-border);
     height: var(--header-height);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .header-left {
@@ -113,6 +117,7 @@
     margin-left: var(--sidebar-width);
     padding: 2rem;
     transition: margin-left var(--transition-speed) var(--transition-timing);
+    min-height: calc(100vh - var(--header-height));
 }
 
 /* Cards & Forms */
@@ -314,8 +319,9 @@
     width: var(--sidebar-width);
     display: flex;
     flex-direction: column;
-    z-index: 100;
+    z-index: 999;
     transition: width 0.3s ease;
+    overflow-y: auto;
 }
 
 .admin-sidebar.collapsed {

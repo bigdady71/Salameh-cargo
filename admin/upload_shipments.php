@@ -2,7 +2,8 @@
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 requireAdmin();
-include __DIR__ . '/../includes/header.php';
+$pageTitle = 'Upload Shipments';
+include __DIR__ . '/../includes/admin-header.php';
 
 $message = '';
 $error = '';
@@ -294,4 +295,4 @@ try {
     </div>
 </div>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php include __DIR__ . '/../includes/admin-footer.php'; ?>

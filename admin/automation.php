@@ -84,115 +84,115 @@ $recentScrapes = $pdo->query('
 <head>
     <title>Automation Controls - Salameh Cargo</title>
     <style>
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
+    .container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 0 20px;
+    }
 
-        .card {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
+    .card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
 
-        .stat-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }
+    .stat-card {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+    }
 
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #007bff;
-        }
+    .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #007bff;
+    }
 
-        .stat-label {
-            color: #6c757d;
-            margin-top: 5px;
-        }
+    .stat-label {
+        color: #6c757d;
+        margin-top: 5px;
+    }
 
-        .logs-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+    .logs-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
 
-        .logs-table th,
-        .logs-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #dee2e6;
-        }
+    .logs-table th,
+    .logs-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #dee2e6;
+    }
 
-        .logs-table th {
-            background: #f8f9fa;
-            font-weight: bold;
-        }
+    .logs-table th {
+        background: #f8f9fa;
+        font-weight: bold;
+    }
 
-        .message {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
+    .message {
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+    }
 
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
+    .success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
 
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
+    .error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
 
-        .trigger-button {
-            background: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
+    .trigger-button {
+        background: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
 
-        .trigger-button:hover {
-            background: #0056b3;
-        }
+    .trigger-button:hover {
+        background: #0056b3;
+    }
 
-        .trigger-button:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-        }
+    .trigger-button:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+    }
 
-        .timestamp {
-            color: #6c757d;
-            font-size: 0.9em;
-        }
+    .timestamp {
+        color: #6c757d;
+        font-size: 0.9em;
+    }
     </style>
 </head>
 
 <body>
     <div class="admin-content">
         <?php if ($success_message): ?>
-            <div class="message success"><?php echo htmlspecialchars($success_message); ?></div>
+        <div class="message success"><?php echo htmlspecialchars($success_message); ?></div>
         <?php endif; ?>
 
         <?php if ($error_message): ?>
-            <div class="message error"><?php echo htmlspecialchars($error_message); ?></div>
+        <div class="message error"><?php echo htmlspecialchars($error_message); ?></div>
         <?php endif; ?>
 
         <div class="stats-grid">
@@ -203,7 +203,8 @@ $recentScrapes = $pdo->query('
                 <div class="stat-label">Last Update Run</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value"><?php echo $nextRun ? date('M j, Y H:i', strtotime($nextRun)) : 'Unknown'; ?></div>
+                <div class="stat-value"><?php echo $nextRun ? date('M j, Y H:i', strtotime($nextRun)) : 'Unknown'; ?>
+                </div>
                 <div class="stat-label">Next Scheduled Run</div>
             </div>
             <div class="stat-card">
@@ -215,11 +216,12 @@ $recentScrapes = $pdo->query('
         <div class="card">
             <h2>Manual Update</h2>
             <form method="post">
-                <button type="submit" name="trigger_update" class="trigger-button" <?php echo canTriggerUpdate() ? '' : 'disabled'; ?>>
+                <button type="submit" name="trigger_update" class="trigger-button"
+                    <?php echo canTriggerUpdate() ? '' : 'disabled'; ?>>
                     Trigger Manual Update
                 </button>
                 <?php if (!canTriggerUpdate()): ?>
-                    <p class="error">Note: Only superadmin and manager roles can trigger manual updates.</p>
+                <p class="error">Note: Only superadmin and manager roles can trigger manual updates.</p>
                 <?php endif; ?>
             </form>
         </div>
@@ -237,28 +239,27 @@ $recentScrapes = $pdo->query('
                 </thead>
                 <tbody>
                     <?php foreach ($recentScrapes as $scrape): ?>
-                        <tr>
-                            <td class="timestamp">
-                                <?php echo date('Y-m-d H:i:s', strtotime($scrape['scrape_time'])); ?>
-                            </td>
-                            <td><?php echo htmlspecialchars($scrape['source_site']); ?></td>
-                            <td>
-                                <?php
+                    <tr>
+                        <td class="timestamp">
+                            <?php echo date('Y-m-d H:i:s', strtotime($scrape['scrape_time'])); ?>
+                        </td>
+                        <td><?php echo htmlspecialchars($scrape['source_site']); ?></td>
+                        <td>
+                            <?php
                                 echo htmlspecialchars($scrape['container_number'] ?? $scrape['tracking_number']);
                                 ?>
-                            </td>
-                            <td><?php echo htmlspecialchars($scrape['status']); ?></td>
-                        </tr>
+                        </td>
+                        <td><?php echo htmlspecialchars($scrape['status']); ?></td>
+                    </tr>
                     <?php endforeach; ?>
                     <?php if (empty($recentScrapes)): ?>
-                        <tr>
-                            <td colspan="4" style="text-align: center;">No recent updates found.</td>
-                        </tr>
+                    <tr>
+                        <td colspan="4" style="text-align: center;">No recent updates found.</td>
+                    </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
-</body>
 
-</html>
+<?php include __DIR__ . '/../includes/admin-footer.php'; ?>

@@ -3,6 +3,8 @@ require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 requireAdmin();
 
+$pageTitle = 'Dashboard';
+
 // Add component styles
 $componentStyles = [
     'stats-cards',
@@ -121,10 +123,9 @@ try {
     $error = 'Error loading dashboard data: ' . $e->getMessage();
 }
 
-include __DIR__ . '/../includes/header.php';
 ?>
 
-<main class="admin-dashboard">
+<div class="admin-dashboard">
     <div class="container">
         <?php if (isset($error)): ?>
             <div class="alert error">
@@ -475,7 +476,7 @@ include __DIR__ . '/../includes/header.php';
         </div>
     </section>
     </div>
-</main>
+</div>
 
 <script>
     // Auto-refresh dashboard every 5 minutes

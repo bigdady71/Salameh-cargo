@@ -27,9 +27,9 @@ if (!isset($_SESSION['user_id'])) {
     <link rel="stylesheet" href="<?= asset('css/admin-dashboard.css') ?>?v=20250816">
 
     <?php if (isset($_SESSION['component_styles'])): ?>
-        <?php foreach ($_SESSION['component_styles'] as $component): ?>
-            <link rel="stylesheet" href="<?= asset('css/components/' . $component . '.css') ?>?v=20250816">
-        <?php endforeach; ?>
+    <?php foreach ($_SESSION['component_styles'] as $component): ?>
+    <link rel="stylesheet" href="<?= asset('css/components/' . $component . '.css') ?>?v=20250816">
+    <?php endforeach; ?>
     <?php endif; ?>
 </head>
 
@@ -45,55 +45,36 @@ if (!isset($_SESSION['user_id'])) {
             <nav class="sidebar-nav">
                 <ul class="nav-items">
                     <li class="nav-item">
-                        <a href="<?= urlp('admin/index.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'index.php' ? 'active' : '' ?>">
+                        <a href="<?= urlp('admin/index.php') ?>"
+                            class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'index.php' ? 'active' : '' ?>">
                             <i class="fas fa-tachometer-alt nav-icon"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?= urlp('admin/shipments.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'shipments.php' ? 'active' : '' ?>">
+                        <a href="<?= urlp('admin/shipments.php') ?>"
+                            class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'shipments.php' ? 'active' : '' ?>">
                             <i class="fas fa-shipping-fast nav-icon"></i>
                             <span>Manage Shipments</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?= urlp('admin/upload_shipments.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'upload_shipments.php' ? 'active' : '' ?>">
+                        <a href="<?= urlp('admin/upload_shipments.php') ?>"
+                            class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'upload_shipments.php' ? 'active' : '' ?>">
                             <i class="fas fa-upload nav-icon"></i>
                             <span>Upload Shipments</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?= urlp('admin/add_user.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'add_user.php' ? 'active' : '' ?>">
+                        <a href="<?= urlp('admin/add_user.php') ?>"
+                            class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'add_user.php' ? 'active' : '' ?>">
                             <i class="fas fa-user-plus nav-icon"></i>
                             <span>Add User</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?= urlp('admin/automation.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'automation.php' ? 'active' : '' ?>">
-                            <i class="fas fa-robot nav-icon"></i>
-                            <span>Automation</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?= urlp('admin/shipments.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'shipments.php' ? 'active' : '' ?>">
-                            <i class="fas fa-shipping-fast nav-icon"></i>
-                            <span>Manage Shipments</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?= urlp('admin/upload_shipments.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'upload_shipments.php' ? 'active' : '' ?>">
-                            <i class="fas fa-upload nav-icon"></i>
-                            <span>Upload Shipments</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?= urlp('admin/add_user.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'add_user.php' ? 'active' : '' ?>">
-                            <i class="fas fa-user-plus nav-icon"></i>
-                            <span>Add User</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?= urlp('admin/automation.php') ?>" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'automation.php' ? 'active' : '' ?>">
+                        <a href="<?= urlp('admin/automation.php') ?>"
+                            class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'automation.php' ? 'active' : '' ?>">
                             <i class="fas fa-robot nav-icon"></i>
                             <span>Automation</span>
                         </a>
@@ -111,80 +92,28 @@ if (!isset($_SESSION['user_id'])) {
 
 
 
- <main class="admin-content">
-            <div class="admin-header">
-                <div class="header-left">
-                    <button id="sidebar-toggle" class="sidebar-toggle">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <h1><?= $pageTitle ?? 'Dashboard' ?></h1>
+        <!-- Admin Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <div class="header-content">
+                    <div class="header-left">
+                        <button id="sidebar-toggle" class="sidebar-toggle">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h1 class="page-title"><?= $pageTitle ?? 'Dashboard' ?></h1>
+                    </div>
+                    <div class="header-actions">
+                        <span class="user-welcome">
+                            Welcome, <?= htmlspecialchars($_SESSION['username']) ?>
+                        </span>
+                    </div>
                 </div>
-            </div>
+            </header>
 
-            <script>
+            <div class="admin-content">
+
+                <script>
                 document.getElementById('sidebar-toggle').addEventListener('click', function() {
                     document.querySelector('.admin-sidebar').classList.toggle('collapsed');
                 });
-            </script>
-            </a>
-            </li>
-            
-    </div>
-
-    <div class="nav-section">
-        <h3 class="nav-title">Management</h3>
-        <ul class="nav-items">
-            <li>
-                <a href="<?= urlp('admin/automation.php') ?>" class="nav-item<?= ($_SERVER['PHP_SELF'] == '/admin/automation.php' ? ' active' : '') ?>">
-                    <i class="fas fa-robot"></i>
-                    <span>Automation</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?= urlp('admin/upload_shipments.php') ?>" class="nav-item<?= ($_SERVER['PHP_SELF'] == '/admin/upload_shipments.php' ? ' active' : '') ?>">
-                    <i class="fas fa-upload"></i>
-                    <span>Upload Shipments</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-
-    <div class="nav-section">
-        <h3 class="nav-title">Settings</h3>
-        <ul class="nav-items">
-            <li>
-                <a href="<?= urlp('admin/add_user.php') ?>" class="nav-item<?= ($_SERVER['PHP_SELF'] == '/admin/add_user.php' ? ' active' : '') ?>">
-                    <i class="fas fa-user-plus"></i>
-                    <span>Add User</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?= urlp('public/logout.php') ?>" class="nav-item text-error">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-    </nav>
-    </aside>
-
-    <!-- Admin Main Content -->
-    <main class="admin-main">
-        <header class="admin-header">
-            <div class="header-content">
-                <h1 class="page-title">
-                    <?php
-                    $current_page = basename($_SERVER['PHP_SELF'], '.php');
-                    echo ucfirst(str_replace('_', ' ', $current_page));
-                    ?>
-                </h1>
-                <div class="header-actions">
-                    <span class="user-welcome">
-                        Welcome, <?= htmlspecialchars($_SESSION['username']) ?>
-                    </span>
-                </div>
-            </div>
-        </header>
-
-        <div class="admin-content">
+                </script>

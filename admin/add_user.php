@@ -233,6 +233,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <button type="submit">Add User</button>
             </form>
         </div>
-</body>
 
-</html>
+<?php include __DIR__ . '/../includes/admin-footer.php'; ?>
