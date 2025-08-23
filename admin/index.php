@@ -3,19 +3,19 @@ require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 requireAdmin();
 
-$pageTitle = 'Dashboard';
+$pageTitle  = 'Dashboard';
 
-// Add component styles
-$componentStyles = [
-    'stats-cards',
-    'status-breakdown',
-    'quick-actions'
-];
+// Dashboard-only stylesheet (loaded by admin-header.php via $pageStyles)
+$pageStyles = ['css/admin-dashboard.css'];
 
-// Register component styles
+// Component styles used on this page only
+$componentStyles = ['stats-cards', 'status-breakdown', 'quick-actions'];
 $_SESSION['component_styles'] = $componentStyles;
 
 include __DIR__ . '/../includes/admin-header.php';
+
+// Prevent component CSS from leaking to other pages
+unset($_SESSION['component_styles']);
 
 // Get dashboard metrics
 try {

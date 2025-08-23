@@ -1,0 +1,76 @@
+/* === ADMIN BASE (shared across all admin pages) === */
+.admin-mode {
+  --sidebar-width: 280px;
+  --header-height: 64px;
+  --bg: #f3f6f9;
+  --bg-elevated: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e5e7eb;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --primary: #0ea5e9;
+  --primary-hover: #0284c7;
+}
+
+/* Layout */
+.admin-mode .admin-layout { min-height: 100vh; background: var(--bg); }
+.admin-mode .admin-sidebar {
+  position: fixed; top:0; left:0; bottom:0; width: var(--sidebar-width);
+  background: #0b3750; color:#fff; z-index: 999; overflow-y:auto;
+}
+.admin-mode .admin-header {
+  position: sticky; top:0; z-index:1000; height: var(--header-height);
+  background: var(--bg-elevated); border-bottom:1px solid var(--border);
+  display:flex; align-items:center; padding:0 24px; box-shadow:0 2px 4px rgba(0,0,0,.05);
+}
+.admin-mode .admin-content {
+  margin-left: var(--sidebar-width);
+  min-height: calc(100vh - var(--header-height));
+  padding: 24px;
+}
+
+/* Sidebar nav list reset (fixes the bullets you’re seeing) */
+.admin-mode .admin-sidebar ul { list-style: none; margin: 0; padding: 0; }
+.admin-mode .admin-sidebar li { margin: 6px 0; }
+.admin-mode .admin-sidebar a {
+  display:flex; align-items:center; gap:10px;
+  padding: 10px 12px; color:#e5eef5; text-decoration:none; border-radius:8px;
+}
+.admin-mode .admin-sidebar a:hover,
+.admin-mode .admin-sidebar .active > a { background: rgba(255,255,255,.12); color:#fff; }
+
+/* Shared UI */
+.admin-mode .card {
+  background: var(--bg-elevated); border:1px solid var(--border);
+  border-radius: 12px; box-shadow: var(--shadow); padding: 16px;
+}
+.admin-mode .btn {
+  display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+  background: var(--bg-elevated); border:1px solid var(--border);
+  padding:10px 16px; border-radius:8px;
+}
+.admin-mode .btn-primary { background: var(--primary); color:#fff; border-color: var(--primary); }
+.admin-mode .btn-primary:hover { background: var(--primary-hover); }
+
+.admin-mode .form-group { margin-bottom: 14px; }
+.admin-mode .form-group label { display:block; font-weight:600; margin-bottom:6px; color:var(--text); }
+.admin-mode .form-group input,
+.admin-mode .form-group select,
+.admin-mode .form-group textarea {
+  width:100%; padding:10px 12px; border:1px solid var(--border);
+  border-radius:8px; background:#fff; color:var(--text);
+}
+
+.admin-mode .data-table { width:100%; border-collapse: collapse; }
+.admin-mode .data-table th, .admin-mode .data-table td {
+  border-bottom:1px solid var(--border); padding:12px; text-align:left;
+}
+.admin-mode .data-table th { background:#f8fafc; font-weight:700; }
+
+.admin-mode .alert { padding:12px; border-radius:8px; margin:12px 0; display:flex; gap:8px; align-items:center; }
+.admin-mode .alert.success { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
+.admin-mode .alert.error   { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
+
+/* Collapsed variant (if you use it) */
+.admin-mode.is-collapsed .admin-sidebar { width: 72px; }
+.admin-mode.is-collapsed .admin-content { margin-left: 72px; }

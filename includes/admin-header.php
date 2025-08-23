@@ -22,9 +22,18 @@ if (!isset($_SESSION['user_id'])) {
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Base Styles -->
-    <link rel="stylesheet" href="<?= asset('css/utilities.css') ?>?v=20250816">
-    <link rel="stylesheet" href="<?= asset('css/admin-dashboard.css') ?>?v=20250816">
+<!-- Base Styles -->
+<link rel="stylesheet" href="<?= asset('css/utilities.css') ?>?v=20250823">
+<link rel="stylesheet" href="<?= asset('css/admin-base.css') ?>?v=20250823">
+
+<?php
+// Page-scoped stylesheets, set: $pageStyles = ['css/some-page.css']
+if (!empty($pageStyles) && is_array($pageStyles)) {
+    foreach ($pageStyles as $path) {
+        echo '<link rel="stylesheet" href="' . asset($path) . '?v=20250823">' . PHP_EOL;
+    }
+}
+?>
 
     <?php if (isset($_SESSION['component_styles'])): ?>
     <?php foreach ($_SESSION['component_styles'] as $component): ?>
@@ -93,8 +102,8 @@ if (!isset($_SESSION['user_id'])) {
 
 
         <!-- Admin Main Content -->
-        <main class="admin-main">
-            <header class="admin-header">
+        <main class="admin-main" >
+            <header class="admin-header"style="display:none !important;">
                 <div class="header-content">
                     <div class="header-left">
                         <button id="sidebar-toggle" class="sidebar-toggle">
