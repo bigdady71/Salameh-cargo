@@ -13,31 +13,25 @@
 }
 
 /* Layout */
-.admin-mode .admin-layout { min-height: 100vh; background: var(--bg); }
-.admin-mode .admin-sidebar {
-  position: fixed; top:0; left:0; bottom:0; width: var(--sidebar-width);
-  background: #0b3750; color:#fff; z-index: 999; overflow-y:auto;
-}
+
+
+
+/* Top navbar (replaces sidebar) */
 .admin-mode .admin-header {
-  position: sticky; top:0; z-index:1000; height: var(--header-height);
-  background: var(--bg-elevated); border-bottom:1px solid var(--border);
-  display:flex; align-items:center; padding:0 24px; box-shadow:0 2px 4px rgba(0,0,0,.05);
-}
-.admin-mode .admin-content {
-  margin-left: var(--sidebar-width);
-  min-height: calc(100vh - var(--header-height));
-  padding: 24px;
+  position: sticky; top: 0; z-index: 1000; height: var(--header-height);
+  background: var(--bg-elevated); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
 }
 
-/* Sidebar nav list reset (fixes the bullets you’re seeing) */
-.admin-mode .admin-sidebar ul { list-style: none; margin: 0; padding: 0; }
-.admin-mode .admin-sidebar li { margin: 6px 0; }
-.admin-mode .admin-sidebar a {
-  display:flex; align-items:center; gap:10px;
-  padding: 10px 12px; color:#e5eef5; text-decoration:none; border-radius:8px;
+.admin-mode .brand { display:flex; align-items:center; gap:10px; font-weight:700; color: var(--text); text-decoration:none; }
+.admin-mode .topnav { display:flex; gap: 8px; margin-left:16px; }
+.admin-mode .topnav a {
+  padding: 8px 12px; border-radius: 8px; color: var(--text); text-decoration: none;
 }
-.admin-mode .admin-sidebar a:hover,
-.admin-mode .admin-sidebar .active > a { background: rgba(255,255,255,.12); color:#fff; }
+.admin-mode .topnav a:hover,
+.admin-mode .topnav a.active { background: rgba(2,132,199,.12); }
+.admin-mode .header-actions { display:flex; align-items:center; gap:12px; }
+.admin-mode .logout { color: var(--text); text-decoration:none; }
 
 /* Shared UI */
 .admin-mode .card {
@@ -71,6 +65,77 @@
 .admin-mode .alert.success { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
 .admin-mode .alert.error   { background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
 
-/* Collapsed variant (if you use it) */
-.admin-mode.is-collapsed .admin-sidebar { width: 72px; }
-.admin-mode.is-collapsed .admin-content { margin-left: 72px; }
+/* === Admin Top Navbar (final) === */
+.admin-mode {
+  --nav-bg: #0f2d4a;          /* deep navy */
+  --nav-ink: #e5eef7;         /* light text */
+  --nav-ink-muted: #c6d3e3;
+  --nav-brand: #FBA540;       /* orange accent */
+  --nav-underline: #FBA540;
+}
+
+.admin-mode .admin-header {
+  background: var(--nav-bg);
+  color: var(--nav-ink);
+  height: var(--header-height);
+  position: sticky; top: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  box-shadow: 0 6px 16px rgba(0,0,0,.25);
+  border-bottom: 0; /* we rely on shadow, not border */
+  backdrop-filter: saturate(120%) blur(2px);
+}
+
+/* Brand */
+.admin-mode .brand {
+  display: flex; align-items: baseline; gap: 6px;
+  font-weight: 800; letter-spacing: .2px; text-decoration: none;
+  color: #fff;
+}
+.admin-mode .brand .accent { color: var(--nav-brand); }
+
+/* Links */
+.admin-mode .topnav { display: flex; align-items: center; gap: 28px; margin-left: 24px; }
+.admin-mode .topnav a {
+  position: relative;
+  display: inline-flex; align-items: center;
+  padding: 14px 0;
+  color: var(--nav-ink); text-decoration: none; font-weight: 600;
+  opacity: .9; transition: opacity .2s ease;
+}
+.admin-mode .topnav a:hover,
+.admin-mode .topnav a.active { opacity: 1; }
+
+/* Underline indicator (hover + active) */
+.admin-mode .topnav a::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: -8px;
+  height: 3px; border-radius: 2px;
+  background: var(--nav-underline);
+  transform: scaleX(0); transform-origin: left; transition: transform .25s ease;
+}
+.admin-mode .topnav a:hover::after,
+.admin-mode .topnav a.active::after { transform: scaleX(1); }
+
+/* Right-side actions */
+.admin-mode .header-actions { display: flex; align-items: center; gap: 12px; }
+.admin-mode .user-welcome { color: var(--nav-ink-muted); font-weight: 500; }
+.admin-mode .logout {
+  color: #fff; text-decoration: none;
+  padding: 6px 10px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,.18);
+  transition: background .2s ease, transform .15s ease;
+}
+.admin-mode .logout:hover { background: rgba(255,255,255,.1); transform: translateY(-1px); }
+
+/* Content below the sticky bar */
+.admin-mode .admin-content { padding-top: calc(var(--header-height) + 16px); }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .admin-mode .topnav { gap: 18px; }
+}
+@media (max-width: 768px) {
+  .admin-mode .topnav { gap: 14px; }
+  .admin-mode .brand span:not(.accent) { display: none; } /* keep 'Salameh' + icon tighter on small screens */
+}

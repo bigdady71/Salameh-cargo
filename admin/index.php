@@ -3,7 +3,7 @@ require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth.php';
 requireAdmin();
 
-$pageTitle  = 'Dashboard';
+$pageTitle = 'Dashboard';
 
 // Dashboard-only stylesheet (loaded by admin-header.php via $pageStyles)
 $pageStyles = ['css/admin-dashboard.css'];
@@ -13,9 +13,6 @@ $componentStyles = ['stats-cards', 'status-breakdown', 'quick-actions'];
 $_SESSION['component_styles'] = $componentStyles;
 
 include __DIR__ . '/../includes/admin-header.php';
-
-// Prevent component CSS from leaking to other pages
-unset($_SESSION['component_styles']);
 
 // Get dashboard metrics
 try {
@@ -134,29 +131,7 @@ try {
             </div>
         <?php endif; ?>
 
-        <div class="admin-header">
-            <div class="header-left">
-                <h1>Admin Dashboard</h1>
-                <div class="admin-info">
-                    <span class="admin-name">Welcome, <?= htmlspecialchars($admin['username']) ?></span>
-                    <span class="admin-badge"><?= htmlspecialchars($admin['role'] ?? 'Administrator') ?></span>
-                    <span class="admin-meta">
-                        <i class="far fa-clock"></i>
-                        Last active: <?= date('M d, H:i', strtotime($dbHealth['db_time'])) ?>
-                    </span>
-                </div>
-            </div>
-            <div class="header-right">
-                <div class="system-status <?= $lastScrape && (time() - strtotime($lastScrape['last_scrape'])) < 3600 ? 'is-active' : 'needs-attention' ?>">
-                    <i class="fas <?= $lastScrape && (time() - strtotime($lastScrape['last_scrape'])) < 3600 ? 'fa-check-circle' : 'fa-exclamation-circle' ?>"></i>
-                    <span>System Status: <?= $lastScrape && (time() - strtotime($lastScrape['last_scrape'])) < 3600 ? 'Active' : 'Need Attention' ?></span>
-                </div>
-                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
-                    <i class="fas fa-sun light-icon"></i>
-                    <i class="fas fa-moon dark-icon"></i>
-                </button>
-            </div>
-        </div>
+
 
         <!-- Quick Stats -->
         <div class="stats-grid slide-up">
