@@ -13,6 +13,7 @@ $componentStyles = ['stats-cards', 'status-breakdown', 'quick-actions'];
 $_SESSION['component_styles'] = $componentStyles;
 
 include __DIR__ . '/../includes/admin-header.php';
+$pageStyles = ['/../assets/css/styles.css'];
 
 // Get dashboard metrics
 try {
